@@ -6,6 +6,11 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using HowHappy_Web.Models;
+using System.IO;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace HowHappy_Web.Controllers
 {
@@ -17,6 +22,13 @@ namespace HowHappy_Web.Controllers
         //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
         public const string _apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
+        IApplicationEnvironment hostingEnvironment;
+        public HomeController(IApplicationEnvironment _hostingEnvironment)
+        {
+            hostingEnvironment = _hostingEnvironment;
+        }
+
+
         public IActionResult Index()
         {
             return View();
@@ -27,24 +39,52 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file)
         {
-            using (var httpClient = new HttpClient())
-            {
-                //setup HttpClient
-                httpClient.BaseAddress = new Uri(_apiUrl);
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
+            //save image on web server
+            var fileName = ContentDispositionHeaderValue
+                        .Parse(file.ContentDisposition)
+                        .FileName
+                        .Trim('"');
+            //var filePath = hostingEnvironment.ApplicationBasePath + "\\wwwroot\\Uploads\\" + DateTime.Now.ToString("yyyyddMHHmmss") + ".jpg";
+            var uniqueFileName = DateTime.Now.ToString("yyyyddMHHmmss") + ".jpg";
+            var projectRelativePath = "\\wwwroot\\Uploads\\" + uniqueFileName;
+            var browserRelativePath = "\\Uploads\\" + uniqueFileName;
+            var filePath = hostingEnvironment.ApplicationBasePath + projectRelativePath;
+            file.SaveAs(filePath);
 
-                //setup data object
-                HttpContent content = new StreamContent(file.OpenReadStream());
-                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
+            ViewData["ImagePath"] = browserRelativePath;
 
-                //make request
-                var response = await httpClient.PostAsync(_apiUrl, content);
 
-                //read response and write to view
-                var responseContent = await response.Content.ReadAsStringAsync();
-                ViewData["Result"] = responseContent;
-            }
+            //using (var httpClient = new HttpClient())
+            //{
+            //    //setup HttpClient
+            //    httpClient.BaseAddress = new Uri(_apiUrl);
+            //    httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
+            //    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
+
+            //    //setup data object
+            //    HttpContent content = new StreamContent(file.OpenReadStream());
+            //    content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
+
+            //    //make request
+            //    var responseMessage = await httpClient.PostAsync(_apiUrl, content);
+
+            //    //read response and write to view
+            //    var responseString = await responseMessage.Content.ReadAsStringAsync();
+
+            //    //parse json string to object 
+            //    List<Face> faces = new List<Face>();
+            //    JArray responseArray = JArray.Parse(responseString);
+            //    foreach (var faceResponse in responseArray)
+            //    {
+            //        var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
+            //        faces.Add(face);
+            //    }
+
+            //    //sort list
+            //    List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
+
+            //    ViewData["Result"] = responseString;
+            //}
 
             return View();
         }
