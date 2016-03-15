@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using HowHappy_Web.Models;
 using System.IO;
 using Microsoft.Extensions.PlatformAbstractions;
+using HowHappy_Web.ViewModels;
 
 namespace HowHappy_Web.Controllers
 {
@@ -39,6 +40,8 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file)
         {
+            var vm = new ResultViewModel();
+
             //save image on web server
             var fileName = ContentDispositionHeaderValue
                         .Parse(file.ContentDisposition)
@@ -51,42 +54,50 @@ namespace HowHappy_Web.Controllers
             var filePath = hostingEnvironment.ApplicationBasePath + projectRelativePath;
             file.SaveAs(filePath);
 
-            ViewData["ImagePath"] = browserRelativePath;
+            //update view model with image path
+            vm.ImagePath = browserRelativePath;
 
 
-            //using (var httpClient = new HttpClient())
-            //{
-            //    //setup HttpClient
-            //    httpClient.BaseAddress = new Uri(_apiUrl);
-            //    httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
-            //    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
+            using (var httpClient = new HttpClient())
+            {
+                //    //setup HttpClient
+                //    httpClient.BaseAddress = new Uri(_apiUrl);
+                //    httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
+                //    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
 
-            //    //setup data object
-            //    HttpContent content = new StreamContent(file.OpenReadStream());
-            //    content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
+                //    //setup data object
+                //    HttpContent content = new StreamContent(file.OpenReadStream());
+                //    content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
 
-            //    //make request
-            //    var responseMessage = await httpClient.PostAsync(_apiUrl, content);
+                //    //make request
+                //    var responseMessage = await httpClient.PostAsync(_apiUrl, content);
 
-            //    //read response and write to view
-            //    var responseString = await responseMessage.Content.ReadAsStringAsync();
+                //    //read response and write to view
+                //    var responseString = await responseMessage.Content.ReadAsStringAsync();
+                var responseString = string.Format("");
+                using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
+                {
+                    responseString = await reader.ReadToEndAsync();
+                    //responseString = new JsonTextReader(reader).ReadAsString();
+                }
 
-            //    //parse json string to object 
-            //    List<Face> faces = new List<Face>();
-            //    JArray responseArray = JArray.Parse(responseString);
-            //    foreach (var faceResponse in responseArray)
-            //    {
-            //        var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
-            //        faces.Add(face);
-            //    }
+                //parse json string to object 
+                List<Face> faces = new List<Face>();
+                JArray responseArray = JArray.Parse(responseString);
+                foreach (var faceResponse in responseArray)
+                {
+                    var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
+                    faces.Add(face);
+                }
 
-            //    //sort list
-            //    List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
+                //sort list
+                List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
 
-            //    ViewData["Result"] = responseString;
-            //}
+                //add list of faces to view model
+                vm.Faces = facesSorted;
+            }
 
-            return View();
+            return View(vm);
         }
 
         public IActionResult About()

@@ -1,32 +1,25 @@
-﻿@ViewData["Result"]
-<style>
-    .crop {
-        margin-top: 100px;
-        max-height: 500px;
-        background-color: yellow;
-    }
+﻿@model HowHappy_Web.ViewModels.ResultViewModel
 
-    .crop img {
-        width:100%;
-        height:100%;
+<style>
+    #cont {
+        position: relative;
+        margin-top: 30px;
+        margin-left: 30px
     }
 
     .rect {
-        position: relative;
-        top: -100px;
-        opacity: 0.8;
-        height: 50px;
-        width: 50px;
-        border-color: red;
+        position: absolute;
+        border-color: yellow;
         border-style: solid;
     }
 
 </style>
-<div class="crop">
-    <img src="~/@ViewData["ImagePath"]" />
-    <div class="rect">
-
-    </div>
+<div id="cont">
+    <img src="@Model.ImagePath" />
+    @foreach (var face in Model.Faces)
+    {
+        <div class="rect" style="left:@face.faceRectangle.left px; top:@face.faceRectangle.top px; width:@face.faceRectangle.width px; height:@face.faceRectangle.height px;"></div>
+    }
 </div>
 
 
