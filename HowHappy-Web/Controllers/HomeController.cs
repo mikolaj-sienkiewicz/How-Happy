@@ -42,24 +42,29 @@ namespace HowHappy_Web.Controllers
         {
             var vm = new ResultViewModel();
 
-            //save image on web server
-            var fileName = ContentDispositionHeaderValue
-                        .Parse(file.ContentDisposition)
-                        .FileName
-                        .Trim('"');
-            //var filePath = hostingEnvironment.ApplicationBasePath + "\\wwwroot\\Uploads\\" + DateTime.Now.ToString("yyyyddMHHmmss") + ".jpg";
-            var uniqueFileName = DateTime.Now.ToString("yyyyddMHHmmss") + ".jpg";
-            var projectRelativePath = "\\wwwroot\\Uploads\\" + uniqueFileName;
-            var browserRelativePath = "\\Uploads\\" + uniqueFileName;
-            var filePath = hostingEnvironment.ApplicationBasePath + projectRelativePath;
-            file.SaveAs(filePath);
-
-            //update view model with image path
-            vm.ImagePath = browserRelativePath;
-
+            //get bytes from image stream and put the base 64 string in the view model
+            using (var stream = file.OpenReadStream())
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    var bytes = memoryStream.ToArray();
+                    var base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
+                    vm.ImagePath = "data:image/png;base64," + base64String;
+                }
+            }
 
             using (var httpClient = new HttpClient())
             {
+#if DEBUG
+                //Use local json for testing
+                var responseString = string.Format("");
+                using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
+                {
+                    responseString = await reader.ReadToEndAsync();
+                }
+
+#else
                 //setup HttpClient
                 httpClient.BaseAddress = new Uri(_apiUrl);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
@@ -74,14 +79,8 @@ namespace HowHappy_Web.Controllers
 
                 //read response and write to view
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
-                
-                //Use local json for testing
-                //var responseString = string.Format("");
-                //using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
-                //{
-                //    responseString = await reader.ReadToEndAsync();
-                //    //responseString = new JsonTextReader(reader).ReadAsString();
-                //}
+
+#endif
 
                 //parse json string to object 
                 List<Face> faces = new List<Face>();
