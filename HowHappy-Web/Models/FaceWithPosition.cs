@@ -9,5 +9,7 @@ namespace HowHappy_Web.Models
     {
         public Face Face { get; set; }
         public int Position { get; set; }
+
+        public string Comment { get; set; }
     }
 }

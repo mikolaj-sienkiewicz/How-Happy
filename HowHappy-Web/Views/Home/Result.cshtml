@@ -26,7 +26,7 @@
     @foreach (var face in Model.Faces)
     {
         <div class="rect" style="left:@(string.Format(face.Face.faceRectangle.left + "px;")); top:@(string.Format(face.Face.faceRectangle.top + "px;")); width:@(string.Format(face.Face.faceRectangle.width + "px;")); height:@(string.Format(face.Face.faceRectangle.height + "px;"));"></div>
-        <div class="rank" style="left:@(string.Format(face.Face.faceRectangle.left + "px;")); top:@(string.Format((face.Face.faceRectangle.top - 30) + "px;")); width:@(string.Format(face.Face.faceRectangle.width + "px;")); height:@(string.Format(face.Face.faceRectangle.height + "px;"));">#@face.Position</div>
+        <div class="rank" style="left:@(string.Format(face.Face.faceRectangle.left + "px;")); top:@(string.Format((face.Face.faceRectangle.top - 30) + "px;")); width:@(string.Format(face.Face.faceRectangle.width + "px;")); height:@(string.Format(face.Face.faceRectangle.height + "px;"));">#@face.Position @face.Comment</div>
     }
 </div>
 

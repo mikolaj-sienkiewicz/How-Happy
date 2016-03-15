@@ -98,12 +98,23 @@ namespace HowHappy_Web.Controllers
                 //create a new list with position
                 List<FaceWithPosition> facesWithPosition = new List<FaceWithPosition>();
                 var count = 1;
+                
                 foreach (var face in facesSorted)
                 {
+                    var comment = string.Empty;
+                    if (count == 1)
+                    {
+                        comment = "First!"; 
+                    }
+                    if (count == facesSorted.Count)
+                    {
+                        comment = "Last!";
+                    }
                     var faceWithPosition = new FaceWithPosition()
                     {
                         Face = face,
-                        Position = count
+                        Position = count,
+                        Comment = comment
                     };
                     facesWithPosition.Add(faceWithPosition);
                     count += 1;
