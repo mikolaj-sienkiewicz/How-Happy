@@ -103,11 +103,11 @@ namespace HowHappy_Web.Controllers
                     var comment = string.Empty;
                     if (count == 1)
                     {
-                        comment = "First!"; 
+                        comment = "Happiest :)"; 
                     }
                     if (count == facesSorted.Count)
                     {
-                        comment = "Last!";
+                        comment = "Saddest :(";
                     }
                     var faceWithPosition = new FaceWithPosition()
                     {
