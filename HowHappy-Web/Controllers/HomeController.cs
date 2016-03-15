@@ -60,26 +60,28 @@ namespace HowHappy_Web.Controllers
 
             using (var httpClient = new HttpClient())
             {
-                //    //setup HttpClient
-                //    httpClient.BaseAddress = new Uri(_apiUrl);
-                //    httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
-                //    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
+                //setup HttpClient
+                httpClient.BaseAddress = new Uri(_apiUrl);
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
+                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
 
-                //    //setup data object
-                //    HttpContent content = new StreamContent(file.OpenReadStream());
-                //    content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
+                //setup data object
+                HttpContent content = new StreamContent(file.OpenReadStream());
+                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
 
-                //    //make request
-                //    var responseMessage = await httpClient.PostAsync(_apiUrl, content);
+                //make request
+                var responseMessage = await httpClient.PostAsync(_apiUrl, content);
 
-                //    //read response and write to view
-                //    var responseString = await responseMessage.Content.ReadAsStringAsync();
-                var responseString = string.Format("");
-                using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
-                {
-                    responseString = await reader.ReadToEndAsync();
-                    //responseString = new JsonTextReader(reader).ReadAsString();
-                }
+                //read response and write to view
+                var responseString = await responseMessage.Content.ReadAsStringAsync();
+                
+                //Use local json for testing
+                //var responseString = string.Format("");
+                //using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
+                //{
+                //    responseString = await reader.ReadToEndAsync();
+                //    //responseString = new JsonTextReader(reader).ReadAsString();
+                //}
 
                 //parse json string to object 
                 List<Face> faces = new List<Face>();
@@ -93,8 +95,22 @@ namespace HowHappy_Web.Controllers
                 //sort list
                 List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
 
+                //create a new list with position
+                List<FaceWithPosition> facesWithPosition = new List<FaceWithPosition>();
+                var count = 1;
+                foreach (var face in facesSorted)
+                {
+                    var faceWithPosition = new FaceWithPosition()
+                    {
+                        Face = face,
+                        Position = count
+                    };
+                    facesWithPosition.Add(faceWithPosition);
+                    count += 1;
+                }
+
                 //add list of faces to view model
-                vm.Faces = facesSorted;
+                vm.Faces = facesWithPosition;
             }
 
             return View(vm);
