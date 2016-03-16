@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+﻿using HowHappy_Web.Models;
+using HowHappy_Web.ViewModels;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using HowHappy_Web.Models;
-using System.IO;
-using Microsoft.Extensions.PlatformAbstractions;
-using HowHappy_Web.ViewModels;
+using System.Threading.Tasks;
 
 namespace HowHappy_Web.Controllers
 {
