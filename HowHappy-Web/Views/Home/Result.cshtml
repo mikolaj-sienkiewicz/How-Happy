@@ -1,35 +1,42 @@
 ﻿@model HowHappy_Web.ViewModels.ResultViewModel
-
-<style>
-    #cont {
-        position: relative;
-        margin-top: 30px;
-        margin-left: 30px
-    }
-
-    .rect {
-        position: absolute;
-        border-color: white;
-        border-style: solid;
-        border-width: 5px;
-    }
-
-    .rank {
-        position: absolute;
-        color: white;
-        font-size: 3rem;
-        width: 250px;
-    }
-
-
-</style>
-<div  id="cont">
-    <img  src="@Model.ImagePath" />
-    @foreach (var face in Model.Faces)
-    {
-        <div class="rect" style="left:@(string.Format(face.Face.faceRectangle.left + "px;")); top:@(string.Format(face.Face.faceRectangle.top + "px;")); width:@(string.Format(face.Face.faceRectangle.width + "px;")); height:@(string.Format(face.Face.faceRectangle.height + "px;"));"></div>
-        <div class="rank" style="left:@(string.Format(face.Face.faceRectangle.left + "px;")); top:@(string.Format((face.Face.faceRectangle.top - 30) + "px;"));">#@face.Position @face.Comment</div>
-    }
+@{
+    ViewData["Title"] = "Who is the happiest?";
+}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Who was the happiest?</h1>
+        <p>We found <strong>@Model.Faces.Count</strong> faces</p>
+        <div id="cont">
+            <img src="@Model.ImagePath" alt="A photo of faces" />
+            @foreach (var face in Model.Faces)
+            {
+                <style type="text/css">
+                    #rect-@Model.Faces.IndexOf(face)
+                    {
+                        left:@(string.Format(face.faceRectangle.left + "px;"));
+                        top:@(string.Format(face.faceRectangle.top + "px;"));
+                        width:@(string.Format(face.faceRectangle.width + "px;"));
+                        height:@(string.Format(face.faceRectangle.height + "px;"));
+                    }
+                    #rank-@Model.Faces.IndexOf(face)
+                    {
+                        left:@(string.Format(face.faceRectangle.left + "px;"));
+                        top:@(string.Format((face.faceRectangle.top - 35) + "px;"));
+                    }
+                    #detail-@Model.Faces.IndexOf(face)
+                    {
+                        left:@(string.Format(face.faceRectangle.left + face.faceRectangle.width + "px;"));
+                        top:@(string.Format((face.faceRectangle.top) + "px;"));
+                    }
+                </style>
+                <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="focus hover" title="How are you feeling?" data-content="Happiness: @face.scores.happiness<br>Fear: @face.scores.fear<br>Anger: @face.scores.anger<br>Contempt: @face.scores.contempt<br>Disgust: @face.scores.disgust<br>Neutral: @face.scores.neutral<br>Sadness: @face.scores.sadness<br>Surprise: @face.scores.surprise"></div>
+                <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
+            }
+        </div>
+    </div>
 </div>
+
+
+
 
 

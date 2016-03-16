@@ -56,15 +56,14 @@ namespace HowHappy_Web.Controllers
 
             using (var httpClient = new HttpClient())
             {
-#if DEBUG
-                //Use local json for testing
-                var responseString = string.Format("");
-                using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
-                {
-                    responseString = await reader.ReadToEndAsync();
-                }
 
-#else
+                ////Use local json for testing
+                //var responseString = string.Format("");
+                //using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
+                //{
+                //    responseString = await reader.ReadToEndAsync();
+                //}
+
                 //setup HttpClient
                 httpClient.BaseAddress = new Uri(_apiUrl);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
@@ -80,47 +79,31 @@ namespace HowHappy_Web.Controllers
                 //read response and write to view
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
 
-#endif
-
                 //parse json string to object 
                 List<Face> faces = new List<Face>();
                 JArray responseArray = JArray.Parse(responseString);
                 foreach (var faceResponse in responseArray)
                 {
                     var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
+
+                    //round scores
+                    face.scores.anger = Math.Round(face.scores.anger, 4);
+                    face.scores.contempt = Math.Round(face.scores.contempt, 4);
+                    face.scores.disgust = Math.Round(face.scores.disgust, 4);
+                    face.scores.fear = Math.Round(face.scores.fear, 4);
+                    face.scores.happiness = Math.Round(face.scores.happiness, 6);
+                    face.scores.neutral = Math.Round(face.scores.neutral, 4);
+                    face.scores.sadness = Math.Round(face.scores.sadness, 4);
+                    face.scores.surprise = Math.Round(face.scores.surprise, 4);
+
                     faces.Add(face);
                 }
 
                 //sort list
                 List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
 
-                //create a new list with position
-                List<FaceWithPosition> facesWithPosition = new List<FaceWithPosition>();
-                var count = 1;
-                
-                foreach (var face in facesSorted)
-                {
-                    var comment = string.Empty;
-                    if (count == 1)
-                    {
-                        comment = "Happiest :)"; 
-                    }
-                    if (count == facesSorted.Count)
-                    {
-                        comment = "Saddest :(";
-                    }
-                    var faceWithPosition = new FaceWithPosition()
-                    {
-                        Face = face,
-                        Position = count,
-                        Comment = comment
-                    };
-                    facesWithPosition.Add(faceWithPosition);
-                    count += 1;
-                }
-
                 //add list of faces to view model
-                vm.Faces = facesWithPosition;
+                vm.Faces = facesSorted;
             }
 
             return View(vm);

@@ -32,3 +32,58 @@ textarea {
         z-index: 10 !important;
     }
 }
+
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-file input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            background: red;
+            cursor: inherit;
+            display: block;
+        }
+
+    input[readonly] {
+        background-color: white !important;
+        cursor: text !important;
+    }
+
+    #cont {
+        position: relative;
+        margin-top: 30px;
+        margin-left: 30px
+    }
+
+    .rect {
+        position: absolute;
+        border-color: orangered;
+        border-style: solid;
+        border-width: 5px;
+    }
+
+    .rank {
+        position: absolute;
+        color: orangered;
+        font-size: 3rem;
+        width: 250px;
+    }
+
+.detail {
+    position: absolute;
+    background-color: orangered;
+    color: white;
+    font-size: 3rem;
+    width: 250px;
+    z-index: 100;
+    display: none;
+}
