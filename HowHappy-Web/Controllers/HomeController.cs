@@ -43,27 +43,20 @@ namespace HowHappy_Web.Controllers
             var vm = new ResultViewModel();
 
             //get bytes from image stream and put the base 64 string in the view model
-            using (var stream = file.OpenReadStream())
+            using (var sourceStream = file.OpenReadStream())
             {
-                using (var memoryStream = new MemoryStream())
+                using (var sourceMemoryStream = new MemoryStream())
                 {
-                    stream.CopyTo(memoryStream);
-                    var bytes = memoryStream.ToArray();
+                    sourceStream.CopyTo(sourceMemoryStream);
+                    var bytes = sourceMemoryStream.ToArray();
                     var base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
                     vm.ImagePath = "data:image/png;base64," + base64String;
                 }
             }
 
+            //call emotion api and handle results
             using (var httpClient = new HttpClient())
             {
-
-                ////Use local json for testing
-                //var responseString = string.Format("");
-                //using (StreamReader reader = System.IO.File.OpenText(@"..\data\EdFullSize.json"))
-                //{
-                //    responseString = await reader.ReadToEndAsync();
-                //}
-
                 //setup HttpClient
                 httpClient.BaseAddress = new Uri(_apiUrl);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
@@ -79,14 +72,15 @@ namespace HowHappy_Web.Controllers
                 //read response and write to view
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
 
-                //parse json string to object 
+                //parse json string to object and enumerate
                 List<Face> faces = new List<Face>();
                 JArray responseArray = JArray.Parse(responseString);
                 foreach (var faceResponse in responseArray)
                 {
+                    //deserialise json to face
                     var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
 
-                    //round scores
+                    //round scores to make them more readable
                     face.scores.anger = Math.Round(face.scores.anger, 4);
                     face.scores.contempt = Math.Round(face.scores.contempt, 4);
                     face.scores.disgust = Math.Round(face.scores.disgust, 4);
@@ -96,16 +90,18 @@ namespace HowHappy_Web.Controllers
                     face.scores.sadness = Math.Round(face.scores.sadness, 4);
                     face.scores.surprise = Math.Round(face.scores.surprise, 4);
 
+                    //add face to faces list
                     faces.Add(face);
                 }
 
-                //sort list
+                //sort list by happiness score
                 List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
 
                 //add list of faces to view model
                 vm.Faces = facesSorted;
             }
 
+            //return view
             return View(vm);
         }
 
