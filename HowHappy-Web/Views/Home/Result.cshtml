@@ -6,6 +6,7 @@
     <div class="col-md-12">
         <h1>Who was the happiest?</h1>
         <p>We found <strong>@Model.Faces.Count</strong> faces</p>
+        <i id="spinner" class="fa fa-circle-o-notch fa-spin fa-5x"></i>
         <div id="cont">
             <div id="draggable">
                 <img src="@Model.ImagePath" alt="A photo of faces" />
@@ -39,12 +40,33 @@
 </div>
 
 @section Scripts{
-<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-<script>
-      $(function() {
-          $("#draggable").draggable();
-      });
-</script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            //TO DO: something that only enables this if the image is bigger than the viewport
+            $("#draggable").draggable({
+                cursor: "move",
+                scroll: true
+            });
+        });
+
+        $(document).ready(function () {
+            resizeDiv();
+            $('#spinner').css({ 'display': 'none' });
+        });
+
+        window.onresize = function (event) {
+            resizeDiv();
+        }
+
+        function resizeDiv() {
+            vpw = $(window).width();
+            vph = $(window).height();
+            $('#cont').css({ 'height': vph - 170 + 'px' });
+            $('#cont').css({ 'width': vpw - 50 + 'px' });
+        }
+
+    </script>
 }
 
 

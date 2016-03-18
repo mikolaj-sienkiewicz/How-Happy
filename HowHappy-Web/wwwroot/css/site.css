@@ -60,10 +60,13 @@ textarea {
 
     #cont {
         position: relative;
-        max-width: 1140px;
+        /*max-width: 1140px;
         max-height: 640px;
-        overflow: hidden;
         background-color: lightgray;
+        */
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 
     .rect {
@@ -89,4 +92,13 @@ textarea {
     width: 250px;
     z-index: 100;
     display: none;
+}
+
+#draggable {
+z-index: 10;
+}
+
+#spinner {
+    position:absolute;
+    z-index:1;
 }
