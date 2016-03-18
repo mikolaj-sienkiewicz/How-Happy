@@ -40,75 +40,53 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file)
         {
-            var vm = new ResultViewModel();
-
-            //get bytes from image stream and put the base 64 string in the view model
-            using (var sourceStream = file.OpenReadStream())
-            {
-                using (var sourceMemoryStream = new MemoryStream())
-                {
-                    sourceStream.CopyTo(sourceMemoryStream);
-                    var bytes = sourceMemoryStream.ToArray();
-                    var base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
-                    vm.ImagePath = "data:image/png;base64," + base64String;
-                }
-            }
+            //initialise vars
+            var facesSorted = new List<Face>();
+            var base64Image = string.Empty;
 
             //call emotion api and handle results
             using (var httpClient = new HttpClient())
             {
-                //setup HttpClient
+                //setup HttpClient with content
                 httpClient.BaseAddress = new Uri(_apiUrl);
                 httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/octet-stream"));
-
-                //setup data object
-                HttpContent content = new StreamContent(file.OpenReadStream());
+                var content = new StreamContent(file.OpenReadStream());
                 content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
 
                 //make request
                 var responseMessage = await httpClient.PostAsync(_apiUrl, content);
 
-                //read response and write to view
+                //read response as a json string
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
 
                 //parse json string to object and enumerate
-                List<Face> faces = new List<Face>();
-                JArray responseArray = JArray.Parse(responseString);
+                var faces = new List<Face>();
+                var responseArray = JArray.Parse(responseString);
                 foreach (var faceResponse in responseArray)
                 {
                     //deserialise json to face
                     var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
 
-                    //round scores to make them more readable
-                    //face.scores.anger = Math.Round(face.scores.anger, 4);
-                    //face.scores.contempt = Math.Round(face.scores.contempt, 4);
-                    //face.scores.disgust = Math.Round(face.scores.disgust, 4);
-                    //face.scores.fear = Math.Round(face.scores.fear, 4);
-                    //face.scores.happiness = Math.Round(face.scores.happiness, 6);
-                    //face.scores.neutral = Math.Round(face.scores.neutral, 4);
-                    //face.scores.sadness = Math.Round(face.scores.sadness, 4);
-                    //face.scores.surprise = Math.Round(face.scores.surprise, 4);
-
-                    face.scores.angerDisplay = Math.Round(face.scores.anger, 2);
-                    face.scores.contemptDisplay = Math.Round(face.scores.contempt, 2);
-                    face.scores.disgustDisplay = Math.Round(face.scores.disgust, 2);
-                    face.scores.fearDisplay = Math.Round(face.scores.fear, 2);
-                    face.scores.happinessDisplay = Math.Round(face.scores.happiness, 2);
-                    face.scores.neutralDisplay = Math.Round(face.scores.neutral, 2);
-                    face.scores.sadnessDisplay = Math.Round(face.scores.sadness, 2);
-                    face.scores.surpriseDisplay = Math.Round(face.scores.surprise, 2);
+                    //add display scores
+                    face = AddDisplayScores(face);
 
                     //add face to faces list
                     faces.Add(face);
                 }
 
                 //sort list by happiness score
-                List<Face> facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
-
-                //add list of faces to view model
-                vm.Faces = facesSorted;
+                facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
             }
+
+            //get bytes from image stream and convert to a base 64 string with the required image src prefix
+            base64Image = "data:image/png;base64," + FileToBase64String(file);
+
+            //create view model
+            var vm = new ResultViewModel()
+            {
+                Faces = facesSorted,
+                ImagePath = base64Image
+            };
 
             //return view
             return View(vm);
@@ -117,6 +95,34 @@ namespace HowHappy_Web.Controllers
         public IActionResult Error()
         {
             return View();
+        }
+
+        private Face AddDisplayScores(Face face)
+        {
+            face.scores.angerDisplay = Math.Round(face.scores.anger, 2);
+            face.scores.contemptDisplay = Math.Round(face.scores.contempt, 2);
+            face.scores.disgustDisplay = Math.Round(face.scores.disgust, 2);
+            face.scores.fearDisplay = Math.Round(face.scores.fear, 2);
+            face.scores.happinessDisplay = Math.Round(face.scores.happiness, 2);
+            face.scores.neutralDisplay = Math.Round(face.scores.neutral, 2);
+            face.scores.sadnessDisplay = Math.Round(face.scores.sadness, 2);
+            face.scores.surpriseDisplay = Math.Round(face.scores.surprise, 2);
+            return face;
+        }
+
+        private string FileToBase64String(IFormFile file)
+        {
+            var base64String = string.Empty;
+            using (var sourceStream = file.OpenReadStream())
+            {
+                using (var sourceMemoryStream = new MemoryStream())
+                {
+                    sourceStream.CopyTo(sourceMemoryStream);
+                    var bytes = sourceMemoryStream.ToArray();
+                    base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
+                }
+            }
+            return base64String;
         }
     }
 }
