@@ -7,10 +7,11 @@
         <h1>Who was the happiest?</h1>
         <p>We found <strong>@Model.Faces.Count</strong> faces</p>
         <div id="cont">
-            <img src="@Model.ImagePath" alt="A photo of faces" />
-            @foreach (var face in Model.Faces)
-            {
-                <style type="text/css">
+            <div id="draggable">
+                <img src="@Model.ImagePath" alt="A photo of faces" />
+                @foreach (var face in Model.Faces)
+                {
+                    <style type="text/css">
                     #rect-@Model.Faces.IndexOf(face)
                     {
                         left:@(string.Format(face.faceRectangle.left + "px;"));
@@ -28,13 +29,23 @@
                         left:@(string.Format(face.faceRectangle.left + face.faceRectangle.width + "px;"));
                         top:@(string.Format((face.faceRectangle.top) + "px;"));
                     }
-                </style>
-                <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="focus hover click" title="How are you feeling?" data-content="Happiness: @face.scores.happiness<br>Fear: @face.scores.fear<br>Anger: @face.scores.anger<br>Contempt: @face.scores.contempt<br>Disgust: @face.scores.disgust<br>Neutral: @face.scores.neutral<br>Sadness: @face.scores.sadness<br>Surprise: @face.scores.surprise"></div>
-                <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
-            }
+                    </style>
+                    <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" title="How are you feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay"></div>
+                    <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
+                }
+            </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+      $(function() {
+          $("#draggable").draggable();
+      });
+</script>
+}
 
 
 

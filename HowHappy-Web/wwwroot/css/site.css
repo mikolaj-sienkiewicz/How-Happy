@@ -60,8 +60,10 @@ textarea {
 
     #cont {
         position: relative;
-        margin-top: 30px;
-        margin-left: 30px
+        max-width: 1140px;
+        max-height: 640px;
+        overflow: hidden;
+        background-color: lightgray;
     }
 
     .rect {
@@ -69,6 +71,7 @@ textarea {
         border-color: orangered;
         border-style: solid;
         border-width: 5px;
+        z-index: 10;
     }
 
     .rank {

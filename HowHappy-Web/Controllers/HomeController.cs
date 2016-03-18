@@ -81,14 +81,23 @@ namespace HowHappy_Web.Controllers
                     var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
 
                     //round scores to make them more readable
-                    face.scores.anger = Math.Round(face.scores.anger, 4);
-                    face.scores.contempt = Math.Round(face.scores.contempt, 4);
-                    face.scores.disgust = Math.Round(face.scores.disgust, 4);
-                    face.scores.fear = Math.Round(face.scores.fear, 4);
-                    face.scores.happiness = Math.Round(face.scores.happiness, 6);
-                    face.scores.neutral = Math.Round(face.scores.neutral, 4);
-                    face.scores.sadness = Math.Round(face.scores.sadness, 4);
-                    face.scores.surprise = Math.Round(face.scores.surprise, 4);
+                    //face.scores.anger = Math.Round(face.scores.anger, 4);
+                    //face.scores.contempt = Math.Round(face.scores.contempt, 4);
+                    //face.scores.disgust = Math.Round(face.scores.disgust, 4);
+                    //face.scores.fear = Math.Round(face.scores.fear, 4);
+                    //face.scores.happiness = Math.Round(face.scores.happiness, 6);
+                    //face.scores.neutral = Math.Round(face.scores.neutral, 4);
+                    //face.scores.sadness = Math.Round(face.scores.sadness, 4);
+                    //face.scores.surprise = Math.Round(face.scores.surprise, 4);
+
+                    face.scores.angerDisplay = Math.Round(face.scores.anger, 2);
+                    face.scores.contemptDisplay = Math.Round(face.scores.contempt, 2);
+                    face.scores.disgustDisplay = Math.Round(face.scores.disgust, 2);
+                    face.scores.fearDisplay = Math.Round(face.scores.fear, 2);
+                    face.scores.happinessDisplay = Math.Round(face.scores.happiness, 2);
+                    face.scores.neutralDisplay = Math.Round(face.scores.neutral, 2);
+                    face.scores.sadnessDisplay = Math.Round(face.scores.sadness, 2);
+                    face.scores.surpriseDisplay = Math.Round(face.scores.surprise, 2);
 
                     //add face to faces list
                     faces.Add(face);

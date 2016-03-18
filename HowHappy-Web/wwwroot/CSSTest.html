@@ -11,9 +11,17 @@
         }
 
         #cont {
-            position: relative;
+            background-color: yellow;
             margin-top: 30px;
-            margin-left: 30px
+            margin-left: 30px;
+            position:relative;
+            width: 500px; 
+            height: 500px;
+            overflow: hidden;
+        }
+
+        #draggable {
+
         }
 
     </style>
@@ -23,10 +31,21 @@
 
     </div>
     <div id="cont">
-        <img src="/images/WP_20151116_11_05_50_Pro.jpg" />
-        <div id="rect1" class="rect">
-
+        <div id="draggable">
+            <img src="images/WP_20151116_11_05_50_Pro.jpg" />
         </div>
+
     </div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.5/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+      $(function() {
+          $("#draggable").draggable();
+      });
+    </script>
+
+
 </body>
 </html>
