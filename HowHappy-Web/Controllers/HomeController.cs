@@ -59,7 +59,7 @@ namespace HowHappy_Web.Controllers
             //setup emotions list
             var emotionsList = new List<Emotion>();
             emotionsList.Add(new Emotion() { Key = "anger", Label = "Angry" });
-            emotionsList.Add(new Emotion() { Key = "contempt", Label = "much Contempt" });
+            emotionsList.Add(new Emotion() { Key = "contempt", Label = "Contemptuous" });
             emotionsList.Add(new Emotion() { Key = "disgust", Label = "Disgusted" });
             emotionsList.Add(new Emotion() { Key = "fear", Label = "Fearful" });
             emotionsList.Add(new Emotion() { Key = "happiness", Label = "Happy" });
@@ -72,45 +72,51 @@ namespace HowHappy_Web.Controllers
             var emotionData = ReadSessionData("emotiondata");
             var faces = GetFaces(emotionData);
 
-            //sort list by happiness score
-            var facesSorted = SortFaces(faces, emotion);
-
-            //work out theme colour and emotion class
+            //make calculations based on current emotion
             var themeColour = string.Empty;
             var emotionClass = string.Empty;
+            var facesSorted = new List<Face>();
             switch (emotion)
             {
                 case "happiness":
                     themeColour = "FFEA0E";
                     emotionClass = "fa-smile-o";
+                    facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
                     break;
                 case "anger":
                     themeColour = "FF0000";
                     emotionClass = "fa-frown-o";
+                    facesSorted = faces.OrderByDescending(o => o.scores.anger).ToList();
                     break;
                 case "contempt":
                     themeColour = "D3D3D3";
                     emotionClass = "fa-minus";
+                    facesSorted = faces.OrderByDescending(o => o.scores.contempt).ToList();
                     break;
                 case "disgust":
                     themeColour = "32CD32";
                     emotionClass = "fa-thumbs-o-down";
+                    facesSorted = faces.OrderByDescending(o => o.scores.disgust).ToList();
                     break;
                 case "fear":
                     themeColour = "808080";
                     emotionClass = "fa-thumbs-o-down";
+                    facesSorted = faces.OrderByDescending(o => o.scores.fear).ToList();
                     break;
                 case "neutral":
                     themeColour = "F5F5DC";
                     emotionClass = "fa-question";
+                    facesSorted = faces.OrderByDescending(o => o.scores.neutral).ToList();
                     break;
                 case "sadness":
                     themeColour = "778BFB";
                     emotionClass = "fa-frown-o";
+                    facesSorted = faces.OrderByDescending(o => o.scores.sadness).ToList();
                     break;
                 case "surprise":
                     themeColour = "FFA500";
                     emotionClass = "fa-smile-o";
+                    facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
                     break;
             }
 
@@ -132,39 +138,6 @@ namespace HowHappy_Web.Controllers
         public IActionResult Error()
         {
             return View();
-        }
-
-        private List<Face> SortFaces(List<Face> faces, string emotion)
-        {
-            var facesSorted = new List<Face>();
-            switch (emotion)
-            {
-                case "happiness":
-                    facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
-                    break;
-                case "anger":
-                    facesSorted = faces.OrderByDescending(o => o.scores.anger).ToList();
-                    break;
-                case "contempt":
-                    facesSorted = faces.OrderByDescending(o => o.scores.contempt).ToList();
-                    break;
-                case "disgust":
-                    facesSorted = faces.OrderByDescending(o => o.scores.disgust).ToList();
-                    break;
-                case "fear":
-                    facesSorted = faces.OrderByDescending(o => o.scores.fear).ToList();
-                    break;
-                case "neutral":
-                    facesSorted = faces.OrderByDescending(o => o.scores.neutral).ToList();
-                    break;
-                case "sadness":
-                    facesSorted = faces.OrderByDescending(o => o.scores.sadness).ToList();
-                    break;
-                case "surprise":
-                    facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
-                    break;
-            }
-            return facesSorted;
         }
 
         private string ReadSessionData(string key)
