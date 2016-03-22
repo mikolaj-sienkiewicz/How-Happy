@@ -3,7 +3,7 @@
     padding-bottom: 20px;
 }
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3 {
     font-family: "blackoutmidnight", Arial, sans-serif;
 }
 
@@ -90,7 +90,7 @@ textarea {
 
 .navbar-inverse {
     background-color: #FFEA0E;
-    border-color: #BFB00A;
+    border-color: #FFEA0E;
 }
 
     .navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-brand {
@@ -140,4 +140,12 @@ z-index: 10;
 #spinner {
     position:absolute;
     z-index:1;
+}
+
+#emotionSelect {
+    display:inline;
+}
+
+#resultTitle {
+padding-top: 15px
 }

@@ -26,6 +26,9 @@ namespace HowHappy_Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCaching(); // Adds a default in-memory implementation of IDistributedCache
+            services.AddSession();
+
             // Add framework services.
             services.AddMvc();
         }
@@ -49,6 +52,9 @@ namespace HowHappy_Web
             app.UseIISPlatformHandler();
 
             app.UseStaticFiles();
+
+            // IMPORTANT: This session call MUST go before UseMvc()
+            app.UseSession();
 
             app.UseMvc(routes =>
             {

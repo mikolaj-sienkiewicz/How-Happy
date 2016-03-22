@@ -2,6 +2,7 @@
 using HowHappy_Web.ViewModels;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Rendering;
 using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -40,16 +41,101 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
         {
-            List<Face> faces = new List<Face>();
-            string base64Image = string.Empty;
+            //get data and store in session
+            if (file != null)
+            {
+                //get emotion data from api
+                var emotionDataString = await GetEmotionData(file);
+                HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
 
-            //get faces
-            faces = await GetFaces(file);
+                //get bytes from image stream and convert to a base 64 string with the required image src prefix
+                var base64Image = "data:image/png;base64," + FileToBase64String(file);
+                HttpContext.Session.Set("image", StringToBytes(base64Image));
+            }
 
-            //get bytes from image stream and convert to a base 64 string with the required image src prefix
-            base64Image = "data:image/png;base64," + FileToBase64String(file);
+            //get image
+            var image = ReadSessionData("image");
+
+            //setup emotions list
+            var emotionsList = new List<Emotion>();
+            emotionsList.Add(new Emotion() { Key = "anger", Label = "Angry" });
+            emotionsList.Add(new Emotion() { Key = "contempt", Label = "much Contempt" });
+            emotionsList.Add(new Emotion() { Key = "disgust", Label = "Disgusted" });
+            emotionsList.Add(new Emotion() { Key = "fear", Label = "Fearful" });
+            emotionsList.Add(new Emotion() { Key = "happiness", Label = "Happy" });
+            emotionsList.Add(new Emotion() { Key = "neutral", Label = "Neutral" });
+            emotionsList.Add(new Emotion() { Key = "sadness", Label = "Sad" });
+            emotionsList.Add(new Emotion() { Key = "surprise", Label = "Surprised" });
+            var emotionsSelectList = new SelectList(emotionsList, "Key", "Label");
+
+            //get faces list
+            var emotionData = ReadSessionData("emotiondata");
+            var faces = GetFaces(emotionData);
 
             //sort list by happiness score
+            var facesSorted = SortFaces(faces, emotion);
+
+            //work out theme colour and emotion class
+            var themeColour = string.Empty;
+            var emotionClass = string.Empty;
+            switch (emotion)
+            {
+                case "happiness":
+                    themeColour = "FFEA0E";
+                    emotionClass = "fa-smile-o";
+                    break;
+                case "anger":
+                    themeColour = "FF0000";
+                    emotionClass = "fa-frown-o";
+                    break;
+                case "contempt":
+                    themeColour = "D3D3D3";
+                    emotionClass = "fa-minus";
+                    break;
+                case "disgust":
+                    themeColour = "32CD32";
+                    emotionClass = "fa-thumbs-o-down";
+                    break;
+                case "fear":
+                    themeColour = "808080";
+                    emotionClass = "fa-thumbs-o-down";
+                    break;
+                case "neutral":
+                    themeColour = "F5F5DC";
+                    emotionClass = "fa-question";
+                    break;
+                case "sadness":
+                    themeColour = "778BFB";
+                    emotionClass = "fa-frown-o";
+                    break;
+                case "surprise":
+                    themeColour = "FFA500";
+                    emotionClass = "fa-smile-o";
+                    break;
+            }
+
+            //create view model
+            var vm = new ResultViewModel()
+            {
+                Faces = facesSorted,
+                ImagePath = image,
+                Emotion = emotion,
+                Emotions = emotionsSelectList,
+                ThemeColour = themeColour,
+                FAEmotionClass = emotionClass
+            };
+
+            //return view
+            return View(vm);
+        }
+
+        public IActionResult Error()
+        {
+            return View();
+        }
+
+        private List<Face> SortFaces(List<Face> faces, string emotion)
+        {
             var facesSorted = new List<Face>();
             switch (emotion)
             {
@@ -78,28 +164,56 @@ namespace HowHappy_Web.Controllers
                     facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
                     break;
             }
-
-            //create view model
-            var vm = new ResultViewModel()
-            {
-                Faces = facesSorted,
-                ImagePath = base64Image
-            };
-
-            //return view
-            return View(vm);
+            return facesSorted;
         }
 
-        public IActionResult Error()
+        private string ReadSessionData(string key)
         {
-            return View();
+            byte[] bytes;
+            HttpContext.Session.TryGetValue(key, out bytes);
+            return BytesToString(bytes);
         }
 
-        private async Task<List<Face>> GetFaces(IFormFile file)
+        static byte[] StringToBytes(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
+        static string BytesToString(byte[] bytes)
+        {
+            char[] chars = new char[bytes.Length / sizeof(char)];
+            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+            return new string(chars);
+        }
+
+        private List<Face> GetFaces(string json)
         {
             var faces = new List<Face>();
 
-            //call emotion api and handle results
+            //parse json string to object and enumerate
+            var responseArray = JArray.Parse(json);
+            foreach (var faceResponse in responseArray)
+            {
+                //deserialise json to face
+                var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
+
+                //add display scores
+                face = AddDisplayScores(face);
+
+                //add face to faces list
+                faces.Add(face);
+            }
+
+            return faces;
+        }
+
+        private async Task<string> GetEmotionData(IFormFile file)
+        {
+            var responseString = string.Empty;
+
+            //call emotion api
             using (var httpClient = new HttpClient())
             {
                 //setup HttpClient with content
@@ -112,24 +226,10 @@ namespace HowHappy_Web.Controllers
                 var responseMessage = await httpClient.PostAsync(_apiUrl, content);
 
                 //read response as a json string
-                var responseString = await responseMessage.Content.ReadAsStringAsync();
-
-                //parse json string to object and enumerate
-                var responseArray = JArray.Parse(responseString);
-                foreach (var faceResponse in responseArray)
-                {
-                    //deserialise json to face
-                    var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
-
-                    //add display scores
-                    face = AddDisplayScores(face);
-
-                    //add face to faces list
-                    faces.Add(face);
-                }
+                responseString = await responseMessage.Content.ReadAsStringAsync();
             }
 
-            return faces;
+            return responseString;
         }
 
         private Face AddDisplayScores(Face face)

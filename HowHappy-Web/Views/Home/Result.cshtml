@@ -1,32 +1,24 @@
 ﻿@model HowHappy_Web.ViewModels.ResultViewModel
 @{
-    ViewData["Title"] = "Who is the happiest?";
+    ViewData["Title"] = "How is everyone feeling?";
+    ViewData["ThemeColour"] = Model.ThemeColour;
+    ViewData["FAEmotionClass"] = Model.FAEmotionClass;
 }
 
 @section navbar{
-    <li>
-    @*<span>How</span>
-        <form asp-action="Result" enctype="multipart/form-data">
-            <select name="emotion" id="emotion" onchange="this.form.submit()">
-                <option value="happiness">Happy</option>
-                <option value="anger">Angry</option>
-                <option value="contempt">Feeling Contempt</option>
-                <option value="disgust">Disgusted</option>
-                <option value="fear">Fearful</option>
-                <option value="neutral">Neutral</option>
-                <option value="sadness">Sad</option>
-                <option value="surprise">Surprised</option>
-            </select>
+    <li id="resultTitle">
+        <span>How</span> 
+        <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
+            <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
         </form>
-        <span>?</span>*@
-        <a asp-controller="Home" asp-action="Index">How Happy?</a>
+        <span>?</span> 
     </li>
 }
 
 <div class="row">
     <div class="col-md-12">
-        <h1>Who was the happiest?</h1>
-        <p>We found <strong>@Model.Faces.Count</strong> faces</p>
+        <h1>Who has the most @Model.Emotion?</h1>
+        <h4>We found <strong>@Model.Faces.Count</strong> faces</h4>
         <i id="spinner" class="fa fa-circle-o-notch fa-spin fa-5x"></i>
         <div id="cont">
             <div id="draggable">
@@ -34,23 +26,37 @@
                 @foreach (var face in Model.Faces)
                 {
                     <style type="text/css">
-                    #rect-@Model.Faces.IndexOf(face)
-                    {
-                        left:@(string.Format(face.faceRectangle.left + "px;"));
-                        top:@(string.Format(face.faceRectangle.top + "px;"));
-                        width:@(string.Format(face.faceRectangle.width + "px;"));
-                        height:@(string.Format(face.faceRectangle.height + "px;"));
-                    }
-                    #rank-@Model.Faces.IndexOf(face)
-                    {
-                        left:@(string.Format(face.faceRectangle.left + "px;"));
-                        top:@(string.Format((face.faceRectangle.top - 35) + "px;"));
-                    }
-                    #detail-@Model.Faces.IndexOf(face)
-                    {
-                        left:@(string.Format(face.faceRectangle.left + face.faceRectangle.width + "px;"));
-                        top:@(string.Format((face.faceRectangle.top) + "px;"));
-                    }
+                        #rect-@Model.Faces.IndexOf(face)
+                        {
+                            left:@(string.Format(face.faceRectangle.left + "px;"));
+                            top:@(string.Format(face.faceRectangle.top + "px;"));
+                            width:@(string.Format(face.faceRectangle.width + "px;"));
+                            height:@(string.Format(face.faceRectangle.height + "px;"));
+                        }
+
+                        #rank-@Model.Faces.IndexOf(face)
+                        {
+                            left:@(string.Format(face.faceRectangle.left + "px;"));
+                            top:@(string.Format((face.faceRectangle.top - 35) + "px;"));
+                        }
+
+                        #detail-@Model.Faces.IndexOf(face)
+                        {
+                            left:@(string.Format(face.faceRectangle.left + face.faceRectangle.width + "px;"));
+                            top:@(string.Format((face.faceRectangle.top) + "px;"));
+                        }
+
+                        .rect {
+                            border-color: #@Model.ThemeColour;
+                        }
+
+                        .rank {
+                            color: #@Model.ThemeColour;
+                        }
+
+                        .popover-title {
+                            background-color: #@Model.ThemeColour;
+                        }
                     </style>
                     <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" title="How is #@(Model.Faces.IndexOf(face)+1) feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay"></div>
                     <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
@@ -93,11 +99,6 @@
             vph = $(window).height();
             $('#cont').css({ 'height': vph - 170 + 'px' });
             $('#cont').css({ 'width': vpw - 50 + 'px' });
-        }
-
-        function ChangeEmotion()
-        {
-            var selectedEmotion = document.getElementById("emotion").value;
         }
 
     </script>
