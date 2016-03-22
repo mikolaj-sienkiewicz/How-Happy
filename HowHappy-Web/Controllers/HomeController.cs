@@ -41,6 +41,7 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
         {
+            int imageHeight, imageWidth;
             //get data and store in session
             if (file != null)
             {
@@ -49,11 +50,20 @@ namespace HowHappy_Web.Controllers
                 HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
 
                 //get bytes from image stream and convert to a base 64 string with the required image src prefix
-                var base64Image = "data:image/png;base64," + FileToBase64String(file);
+                var base64Image = "data:image/png;base64," + FileToBase64String(file,out imageHeight,out imageWidth);
                 HttpContext.Session.Set("image", StringToBytes(base64Image));
+
+                HttpContext.Session.Set("imageHeight", StringToBytes(imageHeight.ToString()));
+                HttpContext.Session.Set("imageWidth", StringToBytes(imageWidth.ToString()));
+            }
+            else
+            {
+                imageHeight = int.Parse(ReadSessionData("imageHeight"));
+                imageWidth = int.Parse(ReadSessionData("imageWidth"));
             }
 
             //get image
+            
             var image = ReadSessionData("image");
 
             //setup emotions list
@@ -125,6 +135,8 @@ namespace HowHappy_Web.Controllers
             {
                 Faces = facesSorted,
                 ImagePath = image,
+                ImageHeight = imageHeight,
+                ImageWidth = imageWidth,
                 Emotion = emotion,
                 Emotions = emotionsSelectList,
                 ThemeColour = themeColour,
@@ -164,7 +176,7 @@ namespace HowHappy_Web.Controllers
         private List<Face> GetFaces(string json)
         {
             var faces = new List<Face>();
-
+            
             //parse json string to object and enumerate
             var responseArray = JArray.Parse(json);
             foreach (var faceResponse in responseArray)
@@ -178,7 +190,7 @@ namespace HowHappy_Web.Controllers
                 //add face to faces list
                 faces.Add(face);
             }
-
+            
             return faces;
         }
 
@@ -218,7 +230,7 @@ namespace HowHappy_Web.Controllers
             return face;
         }
 
-        private string FileToBase64String(IFormFile file)
+        private string FileToBase64String(IFormFile file,out int imageHeight, out int imageWidth)
         {
             var base64String = string.Empty;
             using (var sourceStream = file.OpenReadStream())
@@ -226,6 +238,9 @@ namespace HowHappy_Web.Controllers
                 using (var sourceMemoryStream = new MemoryStream())
                 {
                     sourceStream.CopyTo(sourceMemoryStream);
+                    var image = System.Drawing.Image.FromStream(sourceMemoryStream);
+                    imageHeight = image.Height;
+                    imageWidth = image.Width;
                     var bytes = sourceMemoryStream.ToArray();
                     base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
                 }

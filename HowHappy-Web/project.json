@@ -32,6 +32,9 @@
       "dependencies": {
         "Microsoft.Net.Http": "2.2.22",
         "System.Net.Http": "4.0.1-beta-23516"
+      },
+      "frameworkAssemblies": {
+        "System.Drawing": "4.0.0.0"
       }
     }
   },

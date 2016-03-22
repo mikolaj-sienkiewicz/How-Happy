@@ -25,25 +25,39 @@
                 <img src="@Model.ImagePath" alt="A photo of faces" />
                 @foreach (var face in Model.Faces)
                 {
+                    float leftPercentage = ((float)face.faceRectangle.left /Model.ImageWidth) *  100;
+                    float topPercentage = ((float)face.faceRectangle.top / Model.ImageHeight) * 100;
+                    float widthPercentage = ((float)face.faceRectangle.width / Model.ImageWidth) * 100;
+                    float heightPercentage = ((float)face.faceRectangle.height / Model.ImageHeight) * 100;
+
                     <style type="text/css">
+
+                        #cont 
+                        {
+                            max-width:@(string.Format(Model.ImageWidth + "px;"));
+                            max-height:@(string.Format(Model.ImageHeight + "px;"));
+                            width:100%;
+                            height:100%;
+                        }
+
                         #rect-@Model.Faces.IndexOf(face)
                         {
-                            left:@(string.Format(face.faceRectangle.left + "px;"));
-                            top:@(string.Format(face.faceRectangle.top + "px;"));
-                            width:@(string.Format(face.faceRectangle.width + "px;"));
-                            height:@(string.Format(face.faceRectangle.height + "px;"));
+                            left:@(string.Format(leftPercentage + "%;"));
+                            top:@(string.Format(topPercentage + "%;"));
+                            width:@(string.Format(widthPercentage + "%;"));
+                            height:@(string.Format(heightPercentage + "%;"));
                         }
 
                         #rank-@Model.Faces.IndexOf(face)
                         {
-                            left:@(string.Format(face.faceRectangle.left + "px;"));
-                            top:@(string.Format((face.faceRectangle.top - 35) + "px;"));
+                            top:-45px;
+                            max-width:100%;
                         }
 
                         #detail-@Model.Faces.IndexOf(face)
                         {
-                            left:@(string.Format(face.faceRectangle.left + face.faceRectangle.width + "px;"));
-                            top:@(string.Format((face.faceRectangle.top) + "px;"));
+                            left:@(string.Format(leftPercentage + widthPercentage + "%;"));
+                            top:@(string.Format((topPercentage) + "%;"));
                         }
 
                         .rect {
@@ -58,8 +72,10 @@
                             background-color: #@Model.ThemeColour;
                         }
                     </style>
-                    <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" title="How is #@(Model.Faces.IndexOf(face)+1) feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay"></div>
-                    <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
+                    <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" data-container="body" title="How is #@(Model.Faces.IndexOf(face)+1) feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay">
+                        <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
+                    </div>
+                    
                 }
             </div>
         </div>
@@ -69,37 +85,30 @@
 @section Scripts{
     <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script>
-        $(function () {
-            //TO DO: something that only enables this if the image is bigger than the viewport
-            $("#draggable").draggable({
-                cursor: "move",
-                scroll: true
-            });
-        });
-
         $(document).ready(function () {
-            resizeDiv();
             $('#spinner').css({ 'display': 'none' });
         });
 
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
-        })
+        });
 
         $(function () {
-            $('[data-toggle="popover"]').popover()
-        })
 
-        window.onresize = function (event) {
-            resizeDiv();
-        }
+            var options = {
+                placement: function (context, source) {
+                    var position = $(source).position();
+                    console.log($(window).width() - position.left);
+                    if (($(window).width() - position.left) > 166) {
+                        return "right";
+                    } else {
+                        return "left";
+                    }
+                }
+            };
 
-        function resizeDiv() {
-            vpw = $(window).width();
-            vph = $(window).height();
-            $('#cont').css({ 'height': vph - 170 + 'px' });
-            $('#cont').css({ 'width': vpw - 50 + 'px' });
-        }
+            $('[data-toggle="popover"]').popover(options);
+        });
 
     </script>
 }
