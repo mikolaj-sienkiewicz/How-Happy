@@ -31,7 +31,7 @@
                         top:@(string.Format((face.faceRectangle.top) + "px;"));
                     }
                     </style>
-                    <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" title="How are you feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay"></div>
+                    <div id="rect-@Model.Faces.IndexOf(face)" class="rect" data-toggle="popover" data-html="true" data-trigger="click" title="How is #@(Model.Faces.IndexOf(face)+1) feeling?" data-content="Happiness: @face.scores.happinessDisplay<br>Fear: @face.scores.fearDisplay<br>Anger: @face.scores.angerDisplay<br>Contempt: @face.scores.contemptDisplay<br>Disgust: @face.scores.disgustDisplay<br>Neutral: @face.scores.neutralDisplay<br>Sadness: @face.scores.sadnessDisplay<br>Surprise: @face.scores.surpriseDisplay"></div>
                     <div id="rank-@Model.Faces.IndexOf(face)" class="rank">#@(Model.Faces.IndexOf(face) + 1)</div>
                 }
             </div>
@@ -54,6 +54,14 @@
             resizeDiv();
             $('#spinner').css({ 'display': 'none' });
         });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        })
 
         window.onresize = function (event) {
             resizeDiv();

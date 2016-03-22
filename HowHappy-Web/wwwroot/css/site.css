@@ -3,6 +3,10 @@
     padding-bottom: 20px;
 }
 
+h1, h2, h3, h4, h5 {
+    font-family: "blackoutmidnight", Arial, sans-serif;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -71,7 +75,7 @@ textarea {
 
     .rect {
         position: absolute;
-        border-color: orangered;
+        border-color: #FFEA0E;
         border-style: solid;
         border-width: 5px;
         z-index: 10;
@@ -79,14 +83,49 @@ textarea {
 
     .rank {
         position: absolute;
-        color: orangered;
+        color: #FFEA0E;
         font-size: 3rem;
         width: 250px;
     }
 
+.navbar-inverse {
+    background-color: #FFEA0E;
+    border-color: #BFB00A;
+}
+
+    .navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-brand {
+        color: black;
+    }
+
+    .navbar-inverse:hover .navbar-nav > li > a:hover, .navbar-inverse:hover .navbar-brand:hover {
+        color: black;
+        text-decoration:underline;
+    }
+
+.btn-primary, .btn-primary:focus, .btn-primary.focus {
+    background-color: #808080;
+    border-color: #808080;
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 2rem;
+}
+
+    .btn-primary:hover, .btn-default:hover {
+        background-color: #FFEA0E;
+        border-color: #BFB00A;
+    color: black;
+    }
+
+.btn-file:hover {
+    color: black;
+}
+
+.popover-title {
+    background-color: #FFEA0E
+}
+
 .detail {
     position: absolute;
-    background-color: orangered;
+    background-color: #FFEA0E;
     color: white;
     font-size: 3rem;
     width: 250px;
