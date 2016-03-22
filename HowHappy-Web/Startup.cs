@@ -55,6 +55,12 @@ namespace HowHappy_Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    "Results",                                                              // Route name
+                    "{controller}/{action}/{emotion}",                                      // URL with parameters
+                    new { controller = "Home", action = "Result", emotion = "happiness" }   // Parameter defaults
+                );
             });
         }
 

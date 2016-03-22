@@ -2,6 +2,27 @@
 @{
     ViewData["Title"] = "Who is the happiest?";
 }
+
+@section navbar{
+    <li>
+    @*<span>How</span>
+        <form asp-action="Result" enctype="multipart/form-data">
+            <select name="emotion" id="emotion" onchange="this.form.submit()">
+                <option value="happiness">Happy</option>
+                <option value="anger">Angry</option>
+                <option value="contempt">Feeling Contempt</option>
+                <option value="disgust">Disgusted</option>
+                <option value="fear">Fearful</option>
+                <option value="neutral">Neutral</option>
+                <option value="sadness">Sad</option>
+                <option value="surprise">Surprised</option>
+            </select>
+        </form>
+        <span>?</span>*@
+        <a asp-controller="Home" asp-action="Index">How Happy?</a>
+    </li>
+}
+
 <div class="row">
     <div class="col-md-12">
         <h1>Who was the happiest?</h1>
@@ -72,6 +93,11 @@
             vph = $(window).height();
             $('#cont').css({ 'height': vph - 170 + 'px' });
             $('#cont').css({ 'width': vpw - 50 + 'px' });
+        }
+
+        function ChangeEmotion()
+        {
+            var selectedEmotion = document.getElementById("emotion").value;
         }
 
     </script>

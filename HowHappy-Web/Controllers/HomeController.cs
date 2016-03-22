@@ -38,11 +38,66 @@ namespace HowHappy_Web.Controllers
         // POST: Home/FileExample
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Result(IFormFile file)
+        public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
         {
-            //initialise vars
+            List<Face> faces = new List<Face>();
+            string base64Image = string.Empty;
+
+            //get faces
+            faces = await GetFaces(file);
+
+            //get bytes from image stream and convert to a base 64 string with the required image src prefix
+            base64Image = "data:image/png;base64," + FileToBase64String(file);
+
+            //sort list by happiness score
             var facesSorted = new List<Face>();
-            var base64Image = string.Empty;
+            switch (emotion)
+            {
+                case "happiness":
+                    facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
+                    break;
+                case "anger":
+                    facesSorted = faces.OrderByDescending(o => o.scores.anger).ToList();
+                    break;
+                case "contempt":
+                    facesSorted = faces.OrderByDescending(o => o.scores.contempt).ToList();
+                    break;
+                case "disgust":
+                    facesSorted = faces.OrderByDescending(o => o.scores.disgust).ToList();
+                    break;
+                case "fear":
+                    facesSorted = faces.OrderByDescending(o => o.scores.fear).ToList();
+                    break;
+                case "neutral":
+                    facesSorted = faces.OrderByDescending(o => o.scores.neutral).ToList();
+                    break;
+                case "sadness":
+                    facesSorted = faces.OrderByDescending(o => o.scores.sadness).ToList();
+                    break;
+                case "surprise":
+                    facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
+                    break;
+            }
+
+            //create view model
+            var vm = new ResultViewModel()
+            {
+                Faces = facesSorted,
+                ImagePath = base64Image
+            };
+
+            //return view
+            return View(vm);
+        }
+
+        public IActionResult Error()
+        {
+            return View();
+        }
+
+        private async Task<List<Face>> GetFaces(IFormFile file)
+        {
+            var faces = new List<Face>();
 
             //call emotion api and handle results
             using (var httpClient = new HttpClient())
@@ -60,7 +115,6 @@ namespace HowHappy_Web.Controllers
                 var responseString = await responseMessage.Content.ReadAsStringAsync();
 
                 //parse json string to object and enumerate
-                var faces = new List<Face>();
                 var responseArray = JArray.Parse(responseString);
                 foreach (var faceResponse in responseArray)
                 {
@@ -73,28 +127,9 @@ namespace HowHappy_Web.Controllers
                     //add face to faces list
                     faces.Add(face);
                 }
-
-                //sort list by happiness score
-                facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
             }
 
-            //get bytes from image stream and convert to a base 64 string with the required image src prefix
-            base64Image = "data:image/png;base64," + FileToBase64String(file);
-
-            //create view model
-            var vm = new ResultViewModel()
-            {
-                Faces = facesSorted,
-                ImagePath = base64Image
-            };
-
-            //return view
-            return View(vm);
-        }
-
-        public IActionResult Error()
-        {
-            return View();
+            return faces;
         }
 
         private Face AddDisplayScores(Face face)

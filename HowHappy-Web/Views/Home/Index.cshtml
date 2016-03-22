@@ -2,6 +2,10 @@
     ViewData["Title"] = "Upload a photo with faces in it";
 }
 
+@section navbar{
+    <li><a asp-controller="Home" asp-action="Index">How Happy?</a></li>
+}
+
 <div class="row">
     <div class="col-md-12">
         <h1>How Happy Are You?</h1>
@@ -15,6 +19,7 @@
                                 Browse <input type="file" name="file" id="file" class="form-control">
                             </span>
                         </span>
+                        <input type="hidden" name="emotion" id="emotion" value="happiness" />
                         <input type="text" class="form-control" readonly>
                     </div>
                 </div>
