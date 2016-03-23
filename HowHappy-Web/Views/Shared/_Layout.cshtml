@@ -37,26 +37,9 @@
     <link href="~/fonts/stylesheet.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#@ViewData["ThemeColour"];border-color:#@ViewData["ThemeColour"];">
-        <div class="">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-controller="Home" asp-action="Index" class="navbar-brand"> <i class="fa @ViewData["FAEmotionClass"] fa-lg"></i></a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    @*<li><a asp-controller="Home" asp-action="Index">How Happy?</a></li>*@
-                    @RenderSection("navbar", required: false)
-                </ul>
-            </div>
-        </div>
-    </div>
+@*<body class="@ViewData["BodyClass"]">*@
+<body style="background-color:#@ViewData["ThemeColour"];">
+
     <div class="body-content">
         @RenderBody()
     </div>
@@ -79,9 +62,5 @@
     </environment>
 
     @RenderSection("scripts", required: false)
-
-    <script>
-
-    </script>
 </body>
 </html>

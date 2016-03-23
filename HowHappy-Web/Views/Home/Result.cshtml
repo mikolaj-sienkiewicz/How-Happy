@@ -2,23 +2,15 @@
 @{
     ViewData["Title"] = "How is everyone feeling?";
     ViewData["ThemeColour"] = Model.ThemeColour;
-    ViewData["FAEmotionClass"] = Model.FAEmotionClass;
-}
-
-@section navbar{
-    <li id="resultTitle">
-        <span>How</span> 
-        <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
-            <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
-        </form>
-        <span>?</span> 
-    </li>
 }
 
 <div class="row">
     <div class="col-md-12">
-        <h1>Who has the most @Model.Emotion?</h1>
-        <h4>We found <strong>@Model.Faces.Count</strong> faces</h4>
+        <h1>Who is the most 
+        <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
+            <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
+        </form> <i class="fa @Model.FAEmotionClass fa-lg"></i></h1>
+        <h2>We found <strong>@Model.Faces.Count</strong> faces. <a href="/" class="btn btn-default">Try again?</a></h2> 
         <i id="spinner" class="fa fa-circle-o-notch fa-spin fa-5x"></i>
         <div id="cont">
             <div id="draggable">

@@ -1,10 +1,18 @@
 ﻿body {
-    padding-top: 50px;
     padding-bottom: 20px;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
+    text-align: center;
+}
+
+h1 {
     font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 5rem;
+}
+
+#home-container h1 {
+    font-size: 7rem;
 }
 
 /* Wrapping element */
@@ -15,11 +23,11 @@ h1, h2, h3 {
 }
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
-}
+}*/
 
 /* Carousel */
 .carousel-caption {
@@ -64,10 +72,6 @@ textarea {
 
     #cont {
         position: relative;
-        /*max-width: 1140px;
-        max-height: 640px;
-        background-color: lightgray;
-        */
         width: 100%;
         height: 100%;
         overflow: hidden;
@@ -109,11 +113,10 @@ textarea {
     font-size: 2rem;
 }
 
-    .btn-primary:hover, .btn-default:hover {
-        background-color: #FFEA0E;
-        border-color: #BFB00A;
-    color: black;
-    }
+#submit-button:hover {
+    background-color: #778BFB;
+    border-color: #778BFB;
+}
 
 .btn-file:hover {
     color: black;
@@ -138,7 +141,6 @@ z-index: 10;
 }
 
 #spinner {
-    position:absolute;
     z-index:1;
 }
 
@@ -152,4 +154,22 @@ padding-top: 15px
 
 #draggable img {
     max-width:100%;
+}
+
+#upload-form {
+    margin: 0 auto;
+    max-width: 300px;
+    text-align: center;
+}
+
+#home-container {
+    padding-top: 70px;
+}
+
+#home-container p, #home-container span {
+    text-align:center;
+}
+
+#browse-button {
+    display: block; margin: 0px auto; text-align: center;
 }
