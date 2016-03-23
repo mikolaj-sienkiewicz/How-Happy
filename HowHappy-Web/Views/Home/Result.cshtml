@@ -2,18 +2,32 @@
 @{
     ViewData["Title"] = "How is everyone feeling?";
     ViewData["ThemeColour"] = Model.ThemeColour;
-    ViewData["FAEmotionClass"] = Model.FAEmotionClass;
 }
 
-@section navbar{
-    <li id="resultTitle">
-        <span>How</span> 
-        <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
-            <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
-        </form>
-        <span>?</span> 
-    </li>
-}
+<div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#@Model.ThemeColour;border-color:#@Model.ThemeColour;">
+    <div class="">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand"> <i class="fa @Model.FAEmotionClass fa-lg"></i></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li id="resultTitle">
+                    <span>How</span>
+                    <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
+                        <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
+                    </form>
+                    <span>?</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-12">

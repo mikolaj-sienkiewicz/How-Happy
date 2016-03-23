@@ -7,6 +7,11 @@ h1, h2, h3 {
     font-family: "blackoutmidnight", Arial, sans-serif;
 }
 
+#home-container h1 {
+    font-size: 7rem;
+    text-align: center;
+}
+
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
@@ -109,11 +114,10 @@ textarea {
     font-size: 2rem;
 }
 
-    .btn-primary:hover, .btn-default:hover {
-        background-color: #FFEA0E;
-        border-color: #BFB00A;
-    color: black;
-    }
+#submit-button:hover {
+    background-color: #778BFB;
+    border-color: #778BFB;
+}
 
 .btn-file:hover {
     color: black;
@@ -148,4 +152,22 @@ z-index: 10;
 
 #resultTitle {
 padding-top: 15px
+}
+
+.home-body {
+    background-color: #FFEA0E;
+}
+
+#upload-form {
+    margin: 0 auto;
+    max-width: 300px;
+    text-align: center;
+}
+
+#home-container p, #home-container span {
+    text-align:center;
+}
+
+#browse-button {
+    display: block; margin: 0px auto; text-align: center;
 }
