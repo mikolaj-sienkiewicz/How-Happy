@@ -1,0 +1,250 @@
+{
+  "name": "How Happy",
+  "short_name": "How Happy",
+  "scope": "http://howhappy.co.uk",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "start_url": "http://howhappy.co.uk",
+  "theme_color": "#FFEA0E",
+  "icons": [
+    {
+      "src": "http://howhappy.co.uk/images/windows-smallsquare-24-24.png",
+      "size": "24x24"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-smallsquare-30-30.png",
+      "size": "30x30"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-smallsquare-42-42.png",
+      "size": "42x42"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-smallsquare-54-54.png",
+      "size": "54x54"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-splashscreen-1116-540.png",
+      "size": "1116x540"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-splashscreen-868-420.png",
+      "size": "868x420"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-splashscreen-620-300.png",
+      "size": "620x300"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-squarelogo-270-270.png",
+      "size": "270x270"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-squarelogo-210-210.png",
+      "size": "210x210"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-squarelogo-150-150.png",
+      "size": "150x150"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-squarelogo-120-120.png",
+      "size": "120x120"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-storelogo-90-90.png",
+      "size": "90x90"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-storelogo-70-70.png",
+      "size": "70x70"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windows-storelogo-50-50.png",
+      "size": "50x50"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-appicon-106-106.png",
+      "size": "106x106"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-appicon-62-62.png",
+      "size": "62x62"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-appicon-44-44.png",
+      "size": "44x44"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-mediumtile-360-360.png",
+      "size": "360x360"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-mediumtile-210-210.png",
+      "size": "210x210"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-mediumtile-150-150.png",
+      "size": "150x150"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-smalltile-170-170.png",
+      "size": "170x170"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-smalltile-99-99.png",
+      "size": "99x99"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-smalltile-71-71.png",
+      "size": "71x71"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-storelogo-120-120.png",
+      "size": "120x120"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-storelogo-70-70.png",
+      "size": "70x70"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/windowsphone-storelogo-50-50.png",
+      "size": "50x50"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-512-512.png",
+      "size": "512x512"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-192-192.png",
+      "size": "192x192"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-144-144.png",
+      "size": "144x144"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-96-96.png",
+      "size": "96x96"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-72-72.png",
+      "size": "72x72"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/android-launchericon-48-48.png",
+      "size": "48x48"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-appicon-1024-1024.png",
+      "size": "1024x1024"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-appicon-180-180.png",
+      "size": "180x180"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-appicon-152-152.png",
+      "size": "152x152"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-appicon-120-120.png",
+      "size": "120x120"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-appicon-76-76.png",
+      "size": "76x76"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-750-1334.png",
+      "size": "750x1334"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-1334-750.png",
+      "size": "1334x750"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-1242-2208.png",
+      "size": "1242x2208"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-2208-1242.png",
+      "size": "2208x1242"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-640-960.png",
+      "size": "640x960"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-640-1136.png",
+      "size": "640x1136"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-1536-2048.png",
+      "size": "1536x2048"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-2048-1536.png",
+      "size": "2048x1536"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-768-1024.png",
+      "size": "768x1024"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/ios-launchimage-1024-768.png",
+      "size": "1024x768"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/chrome-extensionmanagementpage-48-48.png",
+      "size": "48x48"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/chrome-favicon-16-16.png",
+      "size": "16x16"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/chrome-installprocess-128-128.png",
+      "size": "128x128"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-marketplace-512-512.png",
+      "size": "512x512"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-marketplace-128-128.png",
+      "size": "128x128"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-256-256.png",
+      "size": "256x256"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-128-128.png",
+      "size": "128x128"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-90-90.png",
+      "size": "90x90"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-64-64.png",
+      "size": "64x64"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-48-48.png",
+      "size": "48x48"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-32-32.png",
+      "size": "32x32"
+    },
+    {
+      "src": "http://howhappy.co.uk/images/firefox-general-16-16.png",
+      "size": "16x16"
+    }
+  ]
+}
+
+
+ 

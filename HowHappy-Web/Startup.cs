@@ -7,6 +7,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNet.StaticFiles;
 
 namespace HowHappy_Web
 {
@@ -51,7 +52,11 @@ namespace HowHappy_Web
 
             app.UseIISPlatformHandler();
 
-            app.UseStaticFiles();
+            // Add static files to the request pipeline.
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                ContentTypeProvider = new ContentTypeProvider(),
+            });
 
             // IMPORTANT: This session call MUST go before UseMvc()
             app.UseSession();
@@ -68,6 +73,14 @@ namespace HowHappy_Web
                     new { controller = "Home", action = "Result", emotion = "happiness" }   // Parameter defaults
                 );
             });
+        }
+
+        public class ContentTypeProvider : FileExtensionContentTypeProvider
+        {
+            public ContentTypeProvider()
+            {
+                Mappings.Add(".webmanifest", "application/json");
+            }
         }
 
         // Entry point for the application.
