@@ -5,15 +5,15 @@
 }
 
 <div class="row">
-    <div class="col-md-12">
-        <h1>Who is the most 
+    <div id="result-cont" class="col-md-12">
+        <h1>How </h1> 
         <form asp-action="Result" enctype="multipart/form-data" id="emotionSelect">
             <select asp-for="Emotion" asp-items="@Model.Emotions" onchange="this.form.submit()"></select>
-        </form> <i class="fa @Model.FAEmotionClass fa-lg"></i></h1>
+        </form> <i id="resultEmoji" class="fa @Model.FAEmotionClass fa-lg"></i>
         <h2>We found <strong>@Model.Faces.Count</strong> faces. <a href="/" class="btn btn-default">Try again?</a></h2> 
         <i id="spinner" class="fa fa-circle-o-notch fa-spin fa-5x"></i>
         <div id="cont">
-            <div id="draggable">
+            <div id="image-cont">
                 <img src="@Model.ImagePath" alt="A photo of faces" />
                 @foreach (var face in Model.Faces)
                 {

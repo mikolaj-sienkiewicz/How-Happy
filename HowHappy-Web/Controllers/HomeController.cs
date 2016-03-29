@@ -62,22 +62,6 @@ namespace HowHappy_Web.Controllers
                 imageWidth = int.Parse(ReadSessionData("imageWidth"));
             }
 
-            //get image
-            
-            var image = ReadSessionData("image");
-
-            //setup emotions list
-            var emotionsList = new List<Emotion>();
-            emotionsList.Add(new Emotion() { Key = "anger", Label = "Angry" });
-            emotionsList.Add(new Emotion() { Key = "contempt", Label = "Contemptuous" });
-            emotionsList.Add(new Emotion() { Key = "disgust", Label = "Disgusted" });
-            emotionsList.Add(new Emotion() { Key = "fear", Label = "Fearful" });
-            emotionsList.Add(new Emotion() { Key = "happiness", Label = "Happy" });
-            emotionsList.Add(new Emotion() { Key = "neutral", Label = "Neutral" });
-            emotionsList.Add(new Emotion() { Key = "sadness", Label = "Sad" });
-            emotionsList.Add(new Emotion() { Key = "surprise", Label = "Surprised" });
-            var emotionsSelectList = new SelectList(emotionsList, "Key", "Label");
-
             //get faces list
             var emotionData = ReadSessionData("emotiondata");
             var faces = GetFaces(emotionData);
@@ -134,11 +118,11 @@ namespace HowHappy_Web.Controllers
             var vm = new ResultViewModel()
             {
                 Faces = facesSorted,
-                ImagePath = image,
+                ImagePath = ReadSessionData("image"),
                 ImageHeight = imageHeight,
                 ImageWidth = imageWidth,
                 Emotion = emotion,
-                Emotions = emotionsSelectList,
+                Emotions = GetEmotionSelectList(),
                 ThemeColour = themeColour,
                 FAEmotionClass = emotionClass
             };
@@ -150,6 +134,21 @@ namespace HowHappy_Web.Controllers
         public IActionResult Error()
         {
             return View();
+        }
+
+        private SelectList GetEmotionSelectList()
+        {
+            var emotionsList = new List<Emotion>();
+            emotionsList.Add(new Emotion() { Key = "anger", Label = "Angry" });
+            emotionsList.Add(new Emotion() { Key = "contempt", Label = "Contemptuous" });
+            emotionsList.Add(new Emotion() { Key = "disgust", Label = "Disgusted" });
+            emotionsList.Add(new Emotion() { Key = "fear", Label = "Fearful" });
+            emotionsList.Add(new Emotion() { Key = "happiness", Label = "Happy" });
+            emotionsList.Add(new Emotion() { Key = "neutral", Label = "Neutral" });
+            emotionsList.Add(new Emotion() { Key = "sadness", Label = "Sad" });
+            emotionsList.Add(new Emotion() { Key = "surprise", Label = "Surprised" });
+            var emotionsSelectList = new SelectList(emotionsList, "Key", "Label");
+            return emotionsSelectList;
         }
 
         private string ReadSessionData(string key)
