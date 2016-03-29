@@ -96,14 +96,14 @@ textarea {
         position: absolute;
         border-color: #FFEA0E;
         border-style: solid;
-        border-width: 5px;
+        border-width: 3px;
         z-index: 10;
     }
 
     .rank {
         position: absolute;
         color: #FFEA0E;
-        font-size: 3rem;
+        font-size: 2rem;
         width: 250px;
     }
 
