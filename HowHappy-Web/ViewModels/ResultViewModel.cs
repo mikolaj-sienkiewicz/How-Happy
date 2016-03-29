@@ -11,6 +11,10 @@ namespace HowHappy_Web.ViewModels
     {
         public  List<Face> Faces { get; set; }
 
+        public int ImageHeight { get; set; }
+
+        public int ImageWidth { get; set; }
+
         public string ImagePath { get; set; }
 
         public string Emotion { get; set; }
