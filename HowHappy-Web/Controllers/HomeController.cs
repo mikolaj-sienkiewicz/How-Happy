@@ -41,25 +41,23 @@ namespace HowHappy_Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
         {
-            int imageHeight, imageWidth;
+
             //get data and store in session
             if (file != null)
             {
-                //get emotion data from api
+                //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
                 HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
 
-                //get bytes from image stream and convert to a base 64 string with the required image src prefix
+                //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
+                int imageHeight;
+                int imageWidth;
                 var base64Image = "data:image/png;base64," + FileToBase64String(file,out imageHeight,out imageWidth);
-                HttpContext.Session.Set("image", StringToBytes(base64Image));
 
+                //store base 64 image itself and image dimensions in session
+                HttpContext.Session.Set("image", StringToBytes(base64Image));
                 HttpContext.Session.Set("imageHeight", StringToBytes(imageHeight.ToString()));
                 HttpContext.Session.Set("imageWidth", StringToBytes(imageWidth.ToString()));
-            }
-            else
-            {
-                imageHeight = int.Parse(ReadSessionData("imageHeight"));
-                imageWidth = int.Parse(ReadSessionData("imageWidth"));
             }
 
             //get faces list
@@ -119,8 +117,8 @@ namespace HowHappy_Web.Controllers
             {
                 Faces = facesSorted,
                 ImagePath = ReadSessionData("image"),
-                ImageHeight = imageHeight,
-                ImageWidth = imageWidth,
+                ImageHeight = int.Parse(ReadSessionData("imageHeight")),
+                ImageWidth = int.Parse(ReadSessionData("imageWidth")),
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = themeColour,
@@ -246,5 +244,6 @@ namespace HowHappy_Web.Controllers
             }
             return base64String;
         }
+
     }
 }
