@@ -1,10 +1,10 @@
 {
   "name": "How Happy",
   "short_name": "How Happy",
-  "scope": "http://howhappy.co.uk",
+  "scope": "howhappy.co.uk",
   "display": "fullscreen",
   "orientation": "portrait",
-  "start_url": "http://howhappy.co.uk",
+  "start_url": "howhappy.co.uk",
   "theme_color": "#FFEA0E",
   "icons": [
     {
