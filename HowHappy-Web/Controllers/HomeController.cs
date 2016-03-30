@@ -50,14 +50,15 @@ namespace HowHappy_Web.Controllers
                 HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
 
                 //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
-                int imageHeight;
-                int imageWidth;
-                var base64Image = "data:image/png;base64," + FileToBase64String(file,out imageHeight,out imageWidth);
+                var dimensions = GetImageDimensions(file);
+                var imageWidth = dimensions.Item1;
+                var imageHeight = dimensions.Item2;
+                var base64Image = "data:image/png;base64," + FileStreamToBase64String(file);
 
                 //store base 64 image itself and image dimensions in session
-                HttpContext.Session.Set("image", StringToBytes(base64Image));
                 HttpContext.Session.Set("imageHeight", StringToBytes(imageHeight.ToString()));
                 HttpContext.Session.Set("imageWidth", StringToBytes(imageWidth.ToString()));
+                HttpContext.Session.Set("image", StringToBytes(base64Image));
             }
 
             //get faces list
@@ -227,23 +228,34 @@ namespace HowHappy_Web.Controllers
             return face;
         }
 
-        private string FileToBase64String(IFormFile file,out int imageHeight, out int imageWidth)
+        private string FileStreamToBase64String(IFormFile file)
         {
-            var base64String = string.Empty;
+            string base64String;
             using (var sourceStream = file.OpenReadStream())
             {
                 using (var sourceMemoryStream = new MemoryStream())
                 {
                     sourceStream.CopyTo(sourceMemoryStream);
-                    var image = System.Drawing.Image.FromStream(sourceMemoryStream);
-                    imageHeight = image.Height;
-                    imageWidth = image.Width;
                     var bytes = sourceMemoryStream.ToArray();
                     base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
                 }
             }
             return base64String;
         }
+
+        private Tuple<int,int> GetImageDimensions(IFormFile file)
+        {
+            Tuple<int, int> r;
+            using (var sourceStream = file.OpenReadStream())
+            {
+                using (var image = System.Drawing.Image.FromStream(sourceStream))
+                {
+                    r = new Tuple<int, int>(image.Width, image.Height);
+                }
+            }
+            return r;
+        }
+
 
     }
 }
