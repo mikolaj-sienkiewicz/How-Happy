@@ -246,6 +246,7 @@ namespace HowHappy_Web.Controllers
 
         private Dimensions GetImageDimensions(IFormFile file)
         {
+            //would this be better done in javascript on the client? http://stackoverflow.com/questions/2865017/get-image-dimensions-using-javascript-during-file-upload
             Dimensions dimensions = new Dimensions();
             using (var sourceStream = file.OpenReadStream())
             {
