@@ -1,13 +1,9 @@
-﻿<!DOCTYPE HTML>
+﻿<!--From http://stackoverflow.com/questions/2865017/get-image-dimensions-using-javascript-during-file-upload-->
+<!DOCTYPE HTML>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <title>Show Image Dimensions Locally</title>
-    <style type='text/css'>
-        body {
-            font-family: sans-serif;
-        }
-    </style>
     <script type='text/javascript'>
 
     function loadImage() {
@@ -38,17 +34,12 @@
         function createImage() {
             img = document.createElement('img');
             img.onload = imageLoaded;
-            img.style.display = 'none'; // If you don't want it showing
             img.src = fr.result;
             document.body.appendChild(img);
         }
 
         function imageLoaded() {
             write(img.width + "x" + img.height);
-            // This next bit removes the image, which is obviously optional -- perhaps you want
-            // to do something with it!
-            img.parentNode.removeChild(img);
-            img = undefined;
         }
 
         function write(msg) {
