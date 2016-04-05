@@ -249,6 +249,7 @@ namespace HowHappy_Web.Controllers
             Dimensions dimensions = new Dimensions();
             using (var sourceStream = file.OpenReadStream())
             {
+                //this has a dependency on System.Drawing from .net 4.x, but there is not yet a good solution for image handling in asp.net core 1.0. See http://www.hanselman.com/blog/RFCServersideImageAndGraphicsProcessingWithNETCoreAndASPNET5.aspx
                 using (var image = System.Drawing.Image.FromStream(sourceStream))
                 {
                     dimensions.Height = image.Height;
