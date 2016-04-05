@@ -42,7 +42,7 @@ namespace HowHappy_Web.Controllers
         public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
         {
 
-            //get data and store in session
+            //get data and store in session. Need to store in session to avoid re-calling the emotion api when the user changes the selected emotion.
             if (file != null)
             {
                 //get emotion data from api and store it in session
@@ -50,9 +50,10 @@ namespace HowHappy_Web.Controllers
                 HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
 
                 //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
+                //This seems to be throwing an exception only on azure with large images. removing for now
                 var dimensions = GetImageDimensions(file);
-                var imageWidth = dimensions.Item1;
-                var imageHeight = dimensions.Item2;
+                var imageWidth = dimensions.Width;
+                var imageHeight = dimensions.Height;
                 var base64Image = "data:image/png;base64," + FileStreamToBase64String(file);
 
                 //store base 64 image itself and image dimensions in session
@@ -243,17 +244,18 @@ namespace HowHappy_Web.Controllers
             return base64String;
         }
 
-        private Tuple<int,int> GetImageDimensions(IFormFile file)
+        private Dimensions GetImageDimensions(IFormFile file)
         {
-            Tuple<int, int> r;
+            Dimensions dimensions = new Dimensions();
             using (var sourceStream = file.OpenReadStream())
             {
                 using (var image = System.Drawing.Image.FromStream(sourceStream))
                 {
-                    r = new Tuple<int, int>(image.Width, image.Height);
+                    dimensions.Height = image.Height;
+                    dimensions.Width = image.Width;
                 }
             }
-            return r;
+            return dimensions;
         }
 
 
