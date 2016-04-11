@@ -1,6 +1,7 @@
-﻿@{
+﻿@model HowHappy_Web.ViewModels.Result2ViewModel
+@{
     ViewData["Title"] = "Upload a photo with faces in it";
-    ViewData["ThemeColour"] = "FFEA0E";
+    ViewData["ThemeColour"] = Model.ThemeColour;
 }
 
 <div id="home-container" class="container">
@@ -19,12 +20,17 @@
                                 Browse <input type="file" name="file" id="file" class="form-control input-lg">
                             </span>
                         </span>
-                        <input type="hidden" name="emotion" id="emotion" value="happiness" />
+                        @*<input type="hidden" name="emotion" id="emotion" value="happiness" />*@
                         <input type="text" class="form-control" readonly>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
+                </div>
+
+                <div class="form-group">
+                    <select asp-for="Emotion" asp-items="@Model.Emotions" class="form-control"></select>
                 </div>
 
             </form>
@@ -56,6 +62,14 @@
 
         $(document).ready(function () {
             $("#upload-button").click(function (evt) {
+                SubmitForm();
+            });
+
+            $("#Emotion").change(function (evt) {
+                SubmitForm();
+            });
+
+            function SubmitForm() {
                 //Display image
                 ShowImage();
 
@@ -86,7 +100,7 @@
                 });
 
 
-            });
+            }
 
             function ShowImage()
             {

@@ -38,19 +38,36 @@ namespace HowHappy_Web.Controllers
 
         public IActionResult Index2()
         {
-            return View();
+            //create view model
+            var emotion = "happiness";
+            var vm = new Result2ViewModel()
+            {
+                Faces = null,
+                Emotion = emotion,
+                Emotions = GetEmotionSelectList(),
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion)
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
         public async Task<IActionResult> Result2()
         {
             //get form data
-            var file = Request.Form.Files[0];
-            var emotion = Request.Form["emotion"];
+            var emotion = Request.Form.ContainsKey("emotion") ?
+                Request.Form["emotion"].ToString() :
+                "happiness";
 
             //get faces list
             if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
             {
+                //get form data
+                var file = Request.Form.Files.Count > 0 ?
+                    Request.Form.Files[0] :
+                    null;
+
                 //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
                 HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
