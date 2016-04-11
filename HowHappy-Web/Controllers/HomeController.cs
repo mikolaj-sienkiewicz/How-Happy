@@ -36,6 +36,35 @@ namespace HowHappy_Web.Controllers
             return View();
         }
 
+        public IActionResult Index2()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Result2()
+        {
+            //get form data
+            var file = Request.Form.Files[0];
+            var emotion = Request.Form["emotion"];
+
+            //get faces list
+            var emotionDataString = await GetEmotionData(file);
+            var faces = GetFaces(emotionDataString);
+
+            //create view model
+            var vm = new Result2ViewModel()
+            {
+                Faces = GetSortedFacesList(faces, emotion),
+                Emotion = emotion,
+                Emotions = GetEmotionSelectList(),
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion)
+            };
+
+            return Json(vm);
+        }
+
         // POST: Home/FileExample
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -66,69 +95,96 @@ namespace HowHappy_Web.Controllers
             var emotionData = ReadSessionData("emotiondata");
             var faces = GetFaces(emotionData);
 
-            //make calculations based on current emotion
-            var themeColour = string.Empty;
-            var emotionClass = string.Empty;
-            var facesSorted = new List<Face>();
-            switch (emotion)
-            {
-                case "happiness":
-                    themeColour = "FFEA0E";
-                    emotionClass = "fa-smile-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
-                    break;
-                case "anger":
-                    themeColour = "FF0000";
-                    emotionClass = "fa-frown-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.anger).ToList();
-                    break;
-                case "contempt":
-                    themeColour = "D3D3D3";
-                    emotionClass = "fa-minus";
-                    facesSorted = faces.OrderByDescending(o => o.scores.contempt).ToList();
-                    break;
-                case "disgust":
-                    themeColour = "32CD32";
-                    emotionClass = "fa-thumbs-o-down";
-                    facesSorted = faces.OrderByDescending(o => o.scores.disgust).ToList();
-                    break;
-                case "fear":
-                    themeColour = "808080";
-                    emotionClass = "fa-thumbs-o-down";
-                    facesSorted = faces.OrderByDescending(o => o.scores.fear).ToList();
-                    break;
-                case "neutral":
-                    themeColour = "F5F5DC";
-                    emotionClass = "fa-question";
-                    facesSorted = faces.OrderByDescending(o => o.scores.neutral).ToList();
-                    break;
-                case "sadness":
-                    themeColour = "778BFB";
-                    emotionClass = "fa-frown-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.sadness).ToList();
-                    break;
-                case "surprise":
-                    themeColour = "FFA500";
-                    emotionClass = "fa-smile-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
-                    break;
-            }
-
             //create view model
             var vm = new ResultViewModel()
             {
-                Faces = facesSorted,
+                Faces = GetSortedFacesList(faces, emotion),
                 ImagePath = ReadSessionData("image"),
                 ImageHeight = int.Parse(ReadSessionData("imageHeight")),
                 ImageWidth = int.Parse(ReadSessionData("imageWidth")),
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
-                ThemeColour = themeColour,
-                FAEmotionClass = emotionClass
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion)
             };
 
             //return view
             return View(vm);
+        }
+
+        private string GetThemeColour(string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return "FFEA0E";
+                case "anger":
+                    return "FF0000";
+                case "contempt":
+                    return "D3D3D3";
+                case "disgust":
+                    return "32CD32";
+                case "fear":
+                    return "808080";
+                case "neutral":
+                    return "F5F5DC";
+                case "sadness":
+                    return "778BFB";
+                case "surprise":
+                    return "FFA500";
+                default:
+                    return "FFEA0E";
+            }
+        }
+
+        private string GetEmojiClass(string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return "fa-smile-o";
+                case "anger":
+                    return "fa-frown-o";
+                case "contempt":
+                    return "fa-minus";
+                case "disgust":
+                    return "fa-thumbs-o-down";
+                case "fear":
+                    return "fa-thumbs-o-down";
+                case "neutral":
+                    return "fa-question";
+                case "sadness":
+                    return "fa-frown-o";
+                case "surprise":
+                    return "fa-smile-o";
+                default:
+                    return "fa-smile-o";
+            }
+        }
+
+        private List<Face> GetSortedFacesList(List<Face> faces, string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return faces.OrderByDescending(o => o.scores.happiness).ToList();
+                case "anger":
+                    return faces.OrderByDescending(o => o.scores.anger).ToList();
+                case "contempt":
+                    return faces.OrderByDescending(o => o.scores.contempt).ToList();
+                case "disgust":
+                    return faces.OrderByDescending(o => o.scores.disgust).ToList();
+                case "fear":
+                    return faces.OrderByDescending(o => o.scores.fear).ToList();
+                case "neutral":
+                    return faces.OrderByDescending(o => o.scores.neutral).ToList();
+                case "sadness":
+                    return faces.OrderByDescending(o => o.scores.sadness).ToList();
+                case "surprise":
+                    return faces.OrderByDescending(o => o.scores.surprise).ToList();
+                default:
+                    return faces;
+            }
         }
 
         public IActionResult Error()

@@ -105,7 +105,10 @@ textarea {
         color: #FFEA0E;
         font-size: 2rem;
         width: 250px;
+        top:-25px;
+        max-width:100%;
     }
+
 
 .navbar-inverse {
     background-color: #FFEA0E;

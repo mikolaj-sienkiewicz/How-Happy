@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Upload a photo with faces in it";
+    ViewData["ThemeColour"] = "FFEA0E";
+}
+
+<div id="home-container" class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>How Happy Are You?</h1>
+
+            <p class="lead">Upload a photo with human faces in and see who is the happiest.</p>
+
+            <form asp-action="Result2" enctype="multipart/form-data" id="upload-form" >
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <span class="btn btn-default btn-file">
+                                Browse <input type="file" name="file" id="file" class="form-control input-lg">
+                            </span>
+                        </span>
+                        <input type="hidden" name="emotion" id="emotion" value="happiness" />
+                        <input type="text" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="resultDetails">
+
+            </div>
+
+            <div id="result" style="position: relative;">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).on('change', '.btn-file :file', function () {
+            var input = $(this),
+              numFiles = input.get(0).files ? input.get(0).files.length : 1,
+              label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+            input.trigger('fileselect', [numFiles, label]);
+        });
+
+        $(document).ready(function () {
+            $("#upload-button").click(function (evt) {
+                //Display image
+                ShowImage();
+
+                //get form data
+                var fd = new FormData();
+                var file_data = $('input[type="file"]')[0].files; // for multiple files
+                for (var i = 0; i < file_data.length; i++) {
+                    fd.append("file_" + i, file_data[i]);
+                }
+                var other_data = $('form').serializeArray();
+                $.each(other_data, function (key, input) {
+                    fd.append(input.name, input.value);
+                });
+
+                //get emotion data
+                $.ajax({
+                    type: "POST",
+                    url: "/home/Result2",
+                    contentType: false,
+                    processData: false,
+                    data: fd,
+                    success: function (response) {
+                        ProcessResult(response);
+                    },
+                    error: function () {
+                        alert("There was error uploading files!");
+                    }
+                });
+
+
+            });
+
+            function ShowImage()
+            {
+                //clear existing result
+                $("#resultDetails").html("");
+                $("#result").html("");
+
+                //get selected image
+                var input = document.getElementById('file');
+
+                //show selected image
+                var file = input.files[0];
+                var fr = new FileReader();
+                fr.onload = createImage;
+                fr.readAsDataURL(file);
+
+                function createImage() {
+                    var img = document.createElement('img');
+                    img.src = fr.result;
+                    $('#result').append(img)
+                }
+            }
+
+            function ProcessResult(response) {
+                var dataString = JSON.stringify(response);
+                var data = JSON.parse(dataString);
+
+                $("#resultDetails").text("We found " + data.Faces.length + " faces");
+
+                $.each(data.Faces, function (index, value) {
+                    var rect = document.createElement('div');
+                    rect.className = "rect";
+                    rect.style.height = value.faceRectangle.height + "px";
+                    rect.style.width = value.faceRectangle.width + "px";
+                    rect.style.left = value.faceRectangle.left + "px";
+                    rect.style.top = value.faceRectangle.top + "px";
+                    rect.id = "rect" + index;
+
+                    var rank = document.createElement('div');
+                    rank.className = "rank";
+                    rank.innerHTML = "#" + (index + 1);
+
+                    rect.appendChild(rank);
+
+                    $('#result').append(rect);
+
+                    //add popover now it is in the dom
+                    $('#rect' + index).popover({
+                        title: "How is #" + (index + 1) + " feeling?",
+                        content: "Text in popover body",
+                        html: "true",
+                        trigger: "click"
+                    });
+                });
+            }
+
+            $('.btn-file :file').on('fileselect', function (event, numFiles, label) {
+
+                var input = $(this).parents('.input-group').find(':text'),
+                  log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+                if (input.length) {
+                    input.val(log);
+                } else {
+                    if (log) alert(log);
+                }
+
+            });
+        });
+    </script>
+}
