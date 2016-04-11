@@ -49,8 +49,16 @@ namespace HowHappy_Web.Controllers
             var emotion = Request.Form["emotion"];
 
             //get faces list
-            var emotionDataString = await GetEmotionData(file);
-            var faces = GetFaces(emotionDataString);
+            if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
+            {
+                //get emotion data from api and store it in session
+                var emotionDataString = await GetEmotionData(file);
+                HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
+            }
+
+            //get faces list
+            var emotionData = ReadSessionData("emotiondata");
+            var faces = GetFaces(emotionData);
 
             //create view model
             var vm = new Result2ViewModel()
@@ -211,7 +219,13 @@ namespace HowHappy_Web.Controllers
         {
             byte[] bytes;
             HttpContext.Session.TryGetValue(key, out bytes);
-            return BytesToString(bytes);
+            if (bytes == null){
+                return string.Empty;
+            }
+            else {
+                return BytesToString(bytes);
+            }
+
         }
 
         static byte[] StringToBytes(string str)

@@ -116,7 +116,9 @@
 
                 $("#resultDetails").text("We found " + data.Faces.length + " faces");
 
+                //draw rectangle for each face
                 $.each(data.Faces, function (index, value) {
+                    console.log(value);
                     var rect = document.createElement('div');
                     rect.className = "rect";
                     rect.style.height = value.faceRectangle.height + "px";
@@ -133,10 +135,18 @@
 
                     $('#result').append(rect);
 
-                    //add popover now it is in the dom
+                    //add popover
+                    var popoverBody = "Happiness: " + value.scores.happinessDisplay
+                        + "<br>Fear: " + value.scores.fearDisplay
+                        + "<br>Anger: " + value.scores.angerDisplay
+                        + "<br>Contempt: " + value.scores.contemptDisplay
+                        + "<br>Disgust: " + value.scores.disgustDisplay
+                        + "<br>Neutral: " + value.scores.neutralDisplay
+                        + "<br>Sadness: " + value.scores.sadnessDisplay
+                        + "<br>Surprise: " + value.scores.surpriseDisplay;
                     $('#rect' + index).popover({
                         title: "How is #" + (index + 1) + " feeling?",
-                        content: "Text in popover body",
+                        content: popoverBody,
                         html: "true",
                         trigger: "click"
                     });
