@@ -1,37 +1,37 @@
 ﻿@model HowHappy_Web.ViewModels.Result2ViewModel
 @{
     ViewData["Title"] = "Upload a photo with faces in it";
-    ViewData["ThemeColour"] = Model.ThemeColour;
+    ViewData["ThemeColour"] = "FFEA0E";
 }
 
-<div id="home-container" class="container">
+<div id="home-container" class="">
     <div class="row">
         <div class="col-md-12">
-            <h1>How Happy Are You?</h1>
-
-            <p class="lead">Upload a photo with human faces in and see who is the happiest.</p>
-
             <form asp-action="Result2" enctype="multipart/form-data" id="upload-form" >
 
-                <div class="form-group">
-                    <div class="input-group">
-                        <span class="input-group-btn">
-                            <span class="btn btn-default btn-file">
-                                Browse <input type="file" name="file" id="file" class="form-control input-lg">
+                <h1>How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
+
+
+                <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the happiest.</p>
+
+                <div id="upload-form-container">
+
+                    <div class="form-group" id="form-file-input">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-default btn-file">
+                                    Browse <input type="file" name="file" id="file" class="form-control input-lg">
+                                </span>
                             </span>
-                        </span>
-                        @*<input type="hidden" name="emotion" id="emotion" value="happiness" />*@
-                        <input type="text" class="form-control" readonly>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="form-submit-button">
+                        <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
-                </div>
-
-                <div class="form-group">
-                    <select asp-for="Emotion" asp-items="@Model.Emotions" class="form-control"></select>
-                </div>
 
             </form>
         </div>
@@ -47,7 +47,6 @@
 
             </div>
         </div>
-
     </div>
 </div>
 
@@ -61,6 +60,12 @@
         });
 
         $(document).ready(function () {
+            //set initial form visibility
+            $("#form-file-input").show();
+            $("#form-submit-button").show();
+            $("#intro-text").show();
+            $("#Emotion").hide();
+
             $("#upload-button").click(function (evt) {
                 SubmitForm();
             });
@@ -105,8 +110,20 @@
             function ShowImage()
             {
                 //clear existing result
-                $("#resultDetails").html("");
+                $("#resultDetails").html("Working on it <i class=\"fa fa-circle-o-notch fa-spin\"></i>");
                 $("#result").html("");
+
+                //adjust the visibility of form elements
+                $("#form-file-input").hide();
+                $("#form-submit-button").hide();
+                $("#intro-text").hide();
+                $("#Emotion").show();
+
+                //initial page style
+                $('h1').css("text-align", "left");
+                $('h1').css("font-size", "5rem");
+                $('#home-container').css("padding-top", "0px");
+                $('#Emotion').css("font-size", "5rem");
 
                 //get selected image
                 var input = document.getElementById('file');
@@ -128,7 +145,16 @@
                 var dataString = JSON.stringify(response);
                 var data = JSON.parse(dataString);
 
-                $("#resultDetails").text("We found " + data.Faces.length + " faces");
+                //$("#resultDetails").text("We found " + data.Faces.length + " faces");
+                $("#resultDetails").html(
+                    "<span>We found "
+                    + data.Faces.length
+                    + " <i class=\"fa "
+                    + data.FAEmotionClass
+                    + " fa-lg\"></i>"
+                    + " faces"
+                    + " <a href=\"/\" class=\"btn btn-default\">Try again</a>"
+                    + "</span>");
 
                 //draw rectangle for each face
                 $.each(data.Faces, function (index, value) {
@@ -164,6 +190,15 @@
                         html: "true",
                         trigger: "click"
                     });
+
+                    //page styling
+                    $("body").css("background-color", "#" + data.ThemeColour);
+                    $('.rect').css("border-color", "#" + data.ThemeColour);
+                    $('.rank').css("color", "#" + data.ThemeColour);
+                    $('.popover-title').css("background-color", "#" + data.ThemeColour);
+                    $('h1').css("text-align", "left");
+
+
                 });
             }
 

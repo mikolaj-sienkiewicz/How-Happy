@@ -176,8 +176,14 @@ padding-top: 15px
 
 #upload-form {
     margin: 0 auto;
-    max-width: 300px;
+    /*max-width: 300px;*/
     text-align: center;
+}
+
+#upload-form-container {
+    max-width: 400px;
+        text-align: center;
+            margin: 0 auto;
 }
 
 #home-container {
@@ -190,4 +196,15 @@ padding-top: 15px
 
 #browse-button {
     display: block; margin: 0px auto; text-align: center;
+}
+
+#Emotion {
+    width:auto;
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 7rem;
+    display: inline;
+}
+
+#resultDetails {
+    font-size: 3rem;
 }

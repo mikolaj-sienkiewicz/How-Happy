@@ -60,17 +60,15 @@ namespace HowHappy_Web.Controllers
                 Request.Form["emotion"].ToString() :
                 "happiness";
 
-            //get faces list
-            if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
+            //get faces list if session data is empty or there is a file in the form
+            if ((string.IsNullOrEmpty(ReadSessionData("emotiondata"))) || (Request.Form.Files.Count > 0))
             {
-                //get form data
-                var file = Request.Form.Files.Count > 0 ?
-                    Request.Form.Files[0] :
-                    null;
+                //get file from form data
+                var file = Request.Form.Files[0];
 
                 //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
-                HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
+                SetSessionData("emotiondata", emotionDataString);
             }
 
             //get faces list
@@ -101,7 +99,7 @@ namespace HowHappy_Web.Controllers
             {
                 //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
-                HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
+                SetSessionData("emotiondata", emotionDataString);
 
                 //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
                 //This seems to be throwing an exception only on azure with large images. removing for now
@@ -111,9 +109,9 @@ namespace HowHappy_Web.Controllers
                 var base64Image = "data:image/png;base64," + FileStreamToBase64String(file);
 
                 //store base 64 image itself and image dimensions in session
-                HttpContext.Session.Set("imageHeight", StringToBytes(imageHeight.ToString()));
-                HttpContext.Session.Set("imageWidth", StringToBytes(imageWidth.ToString()));
-                HttpContext.Session.Set("image", StringToBytes(base64Image));
+                SetSessionData("imageHeight", imageHeight.ToString());
+                SetSessionData("imageWidth", imageWidth.ToString());
+                SetSessionData("image", base64Image);
             }
 
             //get faces list
@@ -240,24 +238,33 @@ namespace HowHappy_Web.Controllers
                 return string.Empty;
             }
             else {
-                return BytesToString(bytes);
+                char[] chars = new char[bytes.Length / sizeof(char)];
+                Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+                return new string(chars);
             }
 
         }
 
-        static byte[] StringToBytes(string str)
+        private void SetSessionData(string key, string value)
         {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
+            byte[] valueAsBytes = new byte[value.Length * sizeof(char)];
+            System.Buffer.BlockCopy(value.ToCharArray(), 0, valueAsBytes, 0, valueAsBytes.Length);
+            HttpContext.Session.Set(key, valueAsBytes);
         }
 
-        static string BytesToString(byte[] bytes)
-        {
-            char[] chars = new char[bytes.Length / sizeof(char)];
-            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-            return new string(chars);
-        }
+        //static byte[] StringToBytes(string str)
+        //{
+        //    byte[] bytes = new byte[str.Length * sizeof(char)];
+        //    System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+        //    return bytes;
+        //}
+
+        //static string BytesToString(byte[] bytes)
+        //{
+        //    char[] chars = new char[bytes.Length / sizeof(char)];
+        //    System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+        //    return new string(chars);
+        //}
 
         private List<Face> GetFaces(string json)
         {
