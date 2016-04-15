@@ -28,8 +28,18 @@
 </form>
 
 @section Scripts{
+
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
     <script>
-        var object = "@Model.ThemeColour";
-        alert(object);
+        $(document).ready(function () {
+            var response = "@Model";
+
+            //Display image
+            ShowImage();
+
+            ProcessResult(response);
+
+        });
+
     </script>
 }
