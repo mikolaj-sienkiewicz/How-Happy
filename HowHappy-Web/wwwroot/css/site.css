@@ -8,24 +8,6 @@ h1, h2, h3, h4 {
 
 h1 {
     font-family: "blackoutmidnight", Arial, sans-serif;
-    font-size: 5rem;
-}
-
-#emotionSelect {
-    font-family: "blackoutmidnight", Arial, sans-serif;
-    font-size: 5rem;
-    display: inline;
-}
-
-#resultEmoji {
-    font-size: 5rem;
-}
-
-#result-cont h1 {
-    display: inline;
-}
-
-#home-container h1 {
     font-size: 7rem;
     text-align: center;
 }
@@ -37,89 +19,55 @@ h1 {
     padding-right: 15px;
 }
 
-/* Set widths on the form inputs since otherwise they're 100% wide */
-/*input,
-select,
-textarea {
-    max-width: 280px;
-}*/
-
-/* Carousel */
-.carousel-caption {
-    z-index: 10 !important;
-}
-
-    .carousel-caption p {
-        font-size: 20px;
-        line-height: 1.4;
-    }
-
 @media (min-width: 768px) {
     .carousel-caption {
         z-index: 10 !important;
     }
 }
 
-    .btn-file {
-        position: relative;
-        overflow: hidden;
-    }
-
-        .btn-file input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            background: red;
-            cursor: inherit;
-            display: block;
-        }
-
-    input[readonly] {
-        background-color: white !important;
-        cursor: text !important;
-    }
-
-    #cont {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    .rect {
-        position: absolute;
-        border-color: #FFEA0E;
-        border-style: solid;
-        border-width: 3px;
-        z-index: 10;
-    }
-
-    .rank {
-        position: absolute;
-        color: #FFEA0E;
-        font-size: 2rem;
-        width: 250px;
-    }
-
-.navbar-inverse {
-    background-color: #FFEA0E;
-    border-color: #FFEA0E;
+.btn-file {
+    position: relative;
+    overflow: hidden;
 }
 
-    .navbar-inverse .navbar-nav > li > a, .navbar-inverse .navbar-brand {
-        color: black;
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        background: red;
+        cursor: inherit;
+        display: block;
     }
 
-    .navbar-inverse:hover .navbar-nav > li > a:hover, .navbar-inverse:hover .navbar-brand:hover {
-        color: black;
-        text-decoration:underline;
-    }
+input[readonly] {
+    background-color: white !important;
+    cursor: text !important;
+}
+
+
+.rect {
+    position: absolute;
+    border-color: #FFEA0E;
+    border-style: solid;
+    border-width: 4px;
+    z-index: 10;
+}
+
+.rank {
+    position: absolute;
+    color: #FFEA0E;
+    font-size: 2rem;
+    width: 250px;
+    top: -25px;
+    max-width: 100%;
+}
+
 
 .btn-primary, .btn-primary:focus, .btn-primary.focus {
     background-color: #808080;
@@ -137,54 +85,50 @@ textarea {
     color: black;
 }
 
-.popover-title {
+/*.popover-title {
     background-color: #FFEA0E;
-}
-
-.detail {
-    position: absolute;
-    background-color: #FFEA0E;
-    color: white;
-    font-size: 3rem;
-    width: 250px;
-    z-index: 100;
-    display: none;
-}
-
-#image-cont {
-    z-index: 10;
-}
-
-#image-cont img {
-    max-width:100%;
-}
-
-#spinner {
-    z-index:1;
-}
-
-#emotionSelect {
-    display:inline;
-}
-
-#resultTitle {
-padding-top: 15px
-}
+}*/
 
 #upload-form {
     margin: 0 auto;
-    max-width: 300px;
     text-align: center;
+}
+
+#upload-form-inputs {
+    max-width: 400px;
+    text-align: center;
+    margin: 0 auto;
 }
 
 #home-container {
     padding-top: 70px;
 }
 
-#home-container p, #home-container span {
-    text-align:center;
-}
+    #home-container p, #home-container span {
+        text-align: center;
+    }
 
 #browse-button {
-    display: block; margin: 0px auto; text-align: center;
+    display: block;
+    margin: 0px auto;
+    text-align: center;
+}
+
+#Emotion {
+    width: auto;
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 7rem;
+    display: inline;
+}
+
+#result {
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    width: auto;
+}
+
+#resultDetails {
+    font-size: 3rem;
+    text-align: center;
 }

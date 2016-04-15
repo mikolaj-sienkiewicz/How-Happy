@@ -24,116 +24,131 @@ namespace HowHappy_Web.Controllers
         //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
         public const string _apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
-        IApplicationEnvironment hostingEnvironment;
-        public HomeController(IApplicationEnvironment _hostingEnvironment)
-        {
-            hostingEnvironment = _hostingEnvironment;
-        }
-
-
         public IActionResult Index()
         {
-            return View();
+            //create view model
+            var emotion = "happiness";
+            var vm = new ResultViewModel()
+            {
+                Faces = null,
+                Emotion = emotion,
+                Emotions = GetEmotionSelectList(),
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion)
+            };
+
+            return View(vm);
         }
 
-        // POST: Home/FileExample
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
+        public async Task<IActionResult> Result2()
         {
+            //get form data
+            var emotion = Request.Form.ContainsKey("emotion") ?
+                Request.Form["emotion"].ToString() :
+                "happiness";
 
-            //get data and store in session. Need to store in session to avoid re-calling the emotion api when the user changes the selected emotion.
-            if (file != null)
+            //get faces list if session data is empty or there is a file in the form
+            if ((string.IsNullOrEmpty(ReadSessionData("emotiondata"))) || (Request.Form.Files.Count > 0))
             {
+                //get file from form data
+                var file = Request.Form.Files[0];
+
                 //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
-                HttpContext.Session.Set("emotiondata", StringToBytes(emotionDataString));
-
-                //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
-                //This seems to be throwing an exception only on azure with large images. removing for now
-                var dimensions = GetImageDimensions(file);
-                var imageWidth = dimensions.Width;
-                var imageHeight = dimensions.Height;
-                var base64Image = "data:image/png;base64," + FileStreamToBase64String(file);
-
-                //store base 64 image itself and image dimensions in session
-                HttpContext.Session.Set("imageHeight", StringToBytes(imageHeight.ToString()));
-                HttpContext.Session.Set("imageWidth", StringToBytes(imageWidth.ToString()));
-                HttpContext.Session.Set("image", StringToBytes(base64Image));
+                SetSessionData("emotiondata", emotionDataString);
             }
 
             //get faces list
             var emotionData = ReadSessionData("emotiondata");
             var faces = GetFaces(emotionData);
 
-            //make calculations based on current emotion
-            var themeColour = string.Empty;
-            var emotionClass = string.Empty;
-            var facesSorted = new List<Face>();
-            switch (emotion)
-            {
-                case "happiness":
-                    themeColour = "FFEA0E";
-                    emotionClass = "fa-smile-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.happiness).ToList();
-                    break;
-                case "anger":
-                    themeColour = "FF0000";
-                    emotionClass = "fa-frown-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.anger).ToList();
-                    break;
-                case "contempt":
-                    themeColour = "D3D3D3";
-                    emotionClass = "fa-minus";
-                    facesSorted = faces.OrderByDescending(o => o.scores.contempt).ToList();
-                    break;
-                case "disgust":
-                    themeColour = "32CD32";
-                    emotionClass = "fa-thumbs-o-down";
-                    facesSorted = faces.OrderByDescending(o => o.scores.disgust).ToList();
-                    break;
-                case "fear":
-                    themeColour = "808080";
-                    emotionClass = "fa-thumbs-o-down";
-                    facesSorted = faces.OrderByDescending(o => o.scores.fear).ToList();
-                    break;
-                case "neutral":
-                    themeColour = "F5F5DC";
-                    emotionClass = "fa-question";
-                    facesSorted = faces.OrderByDescending(o => o.scores.neutral).ToList();
-                    break;
-                case "sadness":
-                    themeColour = "778BFB";
-                    emotionClass = "fa-frown-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.sadness).ToList();
-                    break;
-                case "surprise":
-                    themeColour = "FFA500";
-                    emotionClass = "fa-smile-o";
-                    facesSorted = faces.OrderByDescending(o => o.scores.surprise).ToList();
-                    break;
-            }
-
             //create view model
             var vm = new ResultViewModel()
             {
-                Faces = facesSorted,
-                ImagePath = ReadSessionData("image"),
-                ImageHeight = int.Parse(ReadSessionData("imageHeight")),
-                ImageWidth = int.Parse(ReadSessionData("imageWidth")),
+                Faces = GetSortedFacesList(faces, emotion),
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
-                ThemeColour = themeColour,
-                FAEmotionClass = emotionClass
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion)
             };
 
-            //return view
-            return View(vm);
+            return Json(vm);
         }
 
-        public IActionResult Error()
+        private string GetThemeColour(string emotion)
         {
-            return View();
+            switch (emotion)
+            {
+                case "happiness":
+                    return "FFEA0E";
+                case "anger":
+                    return "FF0000";
+                case "contempt":
+                    return "D3D3D3";
+                case "disgust":
+                    return "32CD32";
+                case "fear":
+                    return "808080";
+                case "neutral":
+                    return "F5F5DC";
+                case "sadness":
+                    return "778BFB";
+                case "surprise":
+                    return "FFA500";
+                default:
+                    return "FFEA0E";
+            }
+        }
+
+        private string GetEmojiClass(string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return "fa-smile-o";
+                case "anger":
+                    return "fa-frown-o";
+                case "contempt":
+                    return "fa-minus";
+                case "disgust":
+                    return "fa-thumbs-o-down";
+                case "fear":
+                    return "fa-thumbs-o-down";
+                case "neutral":
+                    return "fa-question";
+                case "sadness":
+                    return "fa-frown-o";
+                case "surprise":
+                    return "fa-smile-o";
+                default:
+                    return "fa-smile-o";
+            }
+        }
+
+        private List<Face> GetSortedFacesList(List<Face> faces, string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return faces.OrderByDescending(o => o.scores.happiness).ToList();
+                case "anger":
+                    return faces.OrderByDescending(o => o.scores.anger).ToList();
+                case "contempt":
+                    return faces.OrderByDescending(o => o.scores.contempt).ToList();
+                case "disgust":
+                    return faces.OrderByDescending(o => o.scores.disgust).ToList();
+                case "fear":
+                    return faces.OrderByDescending(o => o.scores.fear).ToList();
+                case "neutral":
+                    return faces.OrderByDescending(o => o.scores.neutral).ToList();
+                case "sadness":
+                    return faces.OrderByDescending(o => o.scores.sadness).ToList();
+                case "surprise":
+                    return faces.OrderByDescending(o => o.scores.surprise).ToList();
+                default:
+                    return faces;
+            }
         }
 
         private SelectList GetEmotionSelectList()
@@ -155,21 +170,22 @@ namespace HowHappy_Web.Controllers
         {
             byte[] bytes;
             HttpContext.Session.TryGetValue(key, out bytes);
-            return BytesToString(bytes);
+            if (bytes == null){
+                return string.Empty;
+            }
+            else {
+                char[] chars = new char[bytes.Length / sizeof(char)];
+                Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+                return new string(chars);
+            }
+
         }
 
-        static byte[] StringToBytes(string str)
+        private void SetSessionData(string key, string value)
         {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
-        static string BytesToString(byte[] bytes)
-        {
-            char[] chars = new char[bytes.Length / sizeof(char)];
-            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-            return new string(chars);
+            byte[] valueAsBytes = new byte[value.Length * sizeof(char)];
+            System.Buffer.BlockCopy(value.ToCharArray(), 0, valueAsBytes, 0, valueAsBytes.Length);
+            HttpContext.Session.Set(key, valueAsBytes);
         }
 
         private List<Face> GetFaces(string json)
@@ -182,9 +198,6 @@ namespace HowHappy_Web.Controllers
             {
                 //deserialise json to face
                 var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
-
-                //add display scores
-                face = AddDisplayScores(face);
 
                 //add face to faces list
                 faces.Add(face);
@@ -216,50 +229,10 @@ namespace HowHappy_Web.Controllers
             return responseString;
         }
 
-        private Face AddDisplayScores(Face face)
+        public IActionResult Error()
         {
-            face.scores.angerDisplay = Math.Round(face.scores.anger, 2);
-            face.scores.contemptDisplay = Math.Round(face.scores.contempt, 2);
-            face.scores.disgustDisplay = Math.Round(face.scores.disgust, 2);
-            face.scores.fearDisplay = Math.Round(face.scores.fear, 2);
-            face.scores.happinessDisplay = Math.Round(face.scores.happiness, 2);
-            face.scores.neutralDisplay = Math.Round(face.scores.neutral, 2);
-            face.scores.sadnessDisplay = Math.Round(face.scores.sadness, 2);
-            face.scores.surpriseDisplay = Math.Round(face.scores.surprise, 2);
-            return face;
+            return View();
         }
-
-        private string FileStreamToBase64String(IFormFile file)
-        {
-            string base64String;
-            using (var sourceStream = file.OpenReadStream())
-            {
-                using (var sourceMemoryStream = new MemoryStream())
-                {
-                    sourceStream.CopyTo(sourceMemoryStream);
-                    var bytes = sourceMemoryStream.ToArray();
-                    base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
-                }
-            }
-            return base64String;
-        }
-
-        private Dimensions GetImageDimensions(IFormFile file)
-        {
-            //would this be better done in javascript on the client? http://stackoverflow.com/questions/2865017/get-image-dimensions-using-javascript-during-file-upload
-            Dimensions dimensions = new Dimensions();
-            using (var sourceStream = file.OpenReadStream())
-            {
-                //this has a dependency on System.Drawing from .net 4.x, but there is not yet a good solution for image handling in asp.net core 1.0. See http://www.hanselman.com/blog/RFCServersideImageAndGraphicsProcessingWithNETCoreAndASPNET5.aspx
-                using (var image = System.Drawing.Image.FromStream(sourceStream))
-                {
-                    dimensions.Height = image.Height;
-                    dimensions.Width = image.Width;
-                }
-            }
-            return dimensions;
-        }
-
 
     }
 }

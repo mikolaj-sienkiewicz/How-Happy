@@ -4,57 +4,110 @@
 <head>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
     <title>Show Image Dimensions Locally</title>
-    <script type='text/javascript'>
-
-    function loadImage() {
-        var input, file, fr, img;
-
-        if (typeof window.FileReader !== 'function') {
-            write("The file API isn't supported on this browser yet.");
-            return;
-        }
-
-        input = document.getElementById('imgfile');
-        if (!input) {
-            write("Um, couldn't find the imgfile element.");
-        }
-        else if (!input.files) {
-            write("This browser doesn't seem to support the `files` property of file inputs.");
-        }
-        else if (!input.files[0]) {
-            write("Please select a file before clicking 'Load'");
-        }
-        else {
-            file = input.files[0];
-            fr = new FileReader();
-            fr.onload = createImage;
-            fr.readAsDataURL(file);
-        }
-
-        function createImage() {
-            img = document.createElement('img');
-            img.onload = imageLoaded;
-            img.src = fr.result;
-            document.body.appendChild(img);
-        }
-
-        function imageLoaded() {
-            write(img.width + "x" + img.height);
-        }
-
-        function write(msg) {
-            var p = document.createElement('p');
-            p.innerHTML = msg;
-            document.body.appendChild(p);
-        }
-    }
-
-    </script>
 </head>
 <body>
     <form action='#' onsubmit="return false;">
         <input type='file' id='imgfile'>
         <input type='button' id='btnLoad' value='Load' onclick='loadImage();'>
     </form>
+
+    <div id="resultDetails">
+
+    </div>
+
+    <div id="result" style="position: relative;">
+
+    </div>
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type='text/javascript'>
+        function loadImage() {
+            //clear existing result
+            $("#resultDetails").html("");
+            $("#result").html("");
+
+
+            //get selected image
+            var input = document.getElementById('imgfile');
+
+            //show selected image
+            var file = input.files[0];
+            var fr = new FileReader();
+            fr.onload = createImage;
+            fr.readAsDataURL(file);
+
+            //apiKey: Replace this with your own Project Oxford Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion
+            var apiKey = "1dd1f4e23a5743139399788aa30a7153";
+
+            //apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
+            var apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+
+            $.ajax({
+                url: "/Home/ResultJS",
+                beforeSend: function (xhrObj) {
+                    xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
+                },
+                type: "POST",
+                data: file,
+                processData: false
+            })
+                .done(function (response) {
+                    alert(response);
+                })
+                .fail(function (error) {
+                    alert(error.getAllResponseHeaders());
+                });
+
+            $.ajax({
+                url: apiUrl,
+                beforeSend: function (xhrObj) {
+                    xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
+                    xhrObj.setRequestHeader("Ocp-Apim-Subscription-Key", apiKey);
+                },
+                type: "POST",
+                data: file,
+                processData: false
+            })
+                .done(function (response) {
+                    ProcessResult(response);
+                })
+                .fail(function (error) {
+                    alert(error.getAllResponseHeaders());
+                });
+
+
+            function createImage() {
+                var img = document.createElement('img');
+                img.src = fr.result;
+                $('#result').append(img)
+            }
+
+            function ProcessResult(response) {
+                var dataString = JSON.stringify(response);
+                var data = JSON.parse(dataString);
+           
+                $("#resultDetails").text("We found " + data.length + " faces");
+
+                $.each(data, function (index, value) {
+                    var rect = document.createElement('div');
+                    rect.style.position = "absolute";
+                    rect.style.height = value.faceRectangle.height +"px";
+                    rect.style.width = value.faceRectangle.width + "px";
+                    rect.style.left = value.faceRectangle.left + "px";
+                    rect.style.top = value.faceRectangle.top + "px";
+                    rect.style.border = "#FFEA0E";
+                    rect.style.borderStyle = "solid";
+                    rect.style.borderWidth = "3px";
+                    rect.style.zIndex = "10";
+
+                    $('#result').append(rect);
+                });
+            }
+
+        }
+
+
+    </script>
 </body>
 </html>
