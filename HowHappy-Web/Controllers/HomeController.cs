@@ -26,6 +26,9 @@ namespace HowHappy_Web.Controllers
 
         public IActionResult Index()
         {
+            //clear any existing session data
+            SetSessionData("emotiondata", string.Empty);
+
             //create view model
             var emotion = "happiness";
             var vm = new ResultViewModel()
