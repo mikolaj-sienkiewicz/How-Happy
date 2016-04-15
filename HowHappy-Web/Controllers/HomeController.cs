@@ -65,7 +65,7 @@ namespace HowHappy_Web.Controllers
                 FAEmotionClass = GetEmojiClass(emotion)
             };
 
-            return Json(vm);
+            return View(vm);
         }
 
         public IActionResult Index()
