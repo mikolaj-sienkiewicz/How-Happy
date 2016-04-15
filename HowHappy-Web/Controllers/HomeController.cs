@@ -30,12 +30,6 @@ namespace HowHappy_Web.Controllers
             hostingEnvironment = _hostingEnvironment;
         }
 
-
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         public IActionResult Index2()
         {
             //create view model
@@ -86,53 +80,6 @@ namespace HowHappy_Web.Controllers
             };
 
             return Json(vm);
-        }
-
-        // POST: Home/FileExample
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Result(IFormFile file, string emotion = "happiness")
-        {
-
-            //get data and store in session. Need to store in session to avoid re-calling the emotion api when the user changes the selected emotion.
-            if (file != null)
-            {
-                //get emotion data from api and store it in session
-                var emotionDataString = await GetEmotionData(file);
-                SetSessionData("emotiondata", emotionDataString);
-
-                //get bytes from image stream and convert to a base 64 string with the required image src prefix. Also get image dimensions
-                //This seems to be throwing an exception only on azure with large images. removing for now
-                var dimensions = GetImageDimensions(file);
-                var imageWidth = dimensions.Width;
-                var imageHeight = dimensions.Height;
-                var base64Image = "data:image/png;base64," + FileStreamToBase64String(file);
-
-                //store base 64 image itself and image dimensions in session
-                SetSessionData("imageHeight", imageHeight.ToString());
-                SetSessionData("imageWidth", imageWidth.ToString());
-                SetSessionData("image", base64Image);
-            }
-
-            //get faces list
-            var emotionData = ReadSessionData("emotiondata");
-            var faces = GetFaces(emotionData);
-
-            //create view model
-            var vm = new ResultViewModel()
-            {
-                Faces = GetSortedFacesList(faces, emotion),
-                ImagePath = ReadSessionData("image"),
-                ImageHeight = int.Parse(ReadSessionData("imageHeight")),
-                ImageWidth = int.Parse(ReadSessionData("imageWidth")),
-                Emotion = emotion,
-                Emotions = GetEmotionSelectList(),
-                ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion)
-            };
-
-            //return view
-            return View(vm);
         }
 
         private string GetThemeColour(string emotion)
@@ -252,20 +199,6 @@ namespace HowHappy_Web.Controllers
             HttpContext.Session.Set(key, valueAsBytes);
         }
 
-        //static byte[] StringToBytes(string str)
-        //{
-        //    byte[] bytes = new byte[str.Length * sizeof(char)];
-        //    System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-        //    return bytes;
-        //}
-
-        //static string BytesToString(byte[] bytes)
-        //{
-        //    char[] chars = new char[bytes.Length / sizeof(char)];
-        //    System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
-        //    return new string(chars);
-        //}
-
         private List<Face> GetFaces(string json)
         {
             var faces = new List<Face>();
@@ -276,9 +209,6 @@ namespace HowHappy_Web.Controllers
             {
                 //deserialise json to face
                 var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
-
-                //add display scores
-                face = AddDisplayScores(face);
 
                 //add face to faces list
                 faces.Add(face);
@@ -309,51 +239,6 @@ namespace HowHappy_Web.Controllers
 
             return responseString;
         }
-
-        private Face AddDisplayScores(Face face)
-        {
-            face.scores.angerDisplay = Math.Round(face.scores.anger, 2);
-            face.scores.contemptDisplay = Math.Round(face.scores.contempt, 2);
-            face.scores.disgustDisplay = Math.Round(face.scores.disgust, 2);
-            face.scores.fearDisplay = Math.Round(face.scores.fear, 2);
-            face.scores.happinessDisplay = Math.Round(face.scores.happiness, 2);
-            face.scores.neutralDisplay = Math.Round(face.scores.neutral, 2);
-            face.scores.sadnessDisplay = Math.Round(face.scores.sadness, 2);
-            face.scores.surpriseDisplay = Math.Round(face.scores.surprise, 2);
-            return face;
-        }
-
-        private string FileStreamToBase64String(IFormFile file)
-        {
-            string base64String;
-            using (var sourceStream = file.OpenReadStream())
-            {
-                using (var sourceMemoryStream = new MemoryStream())
-                {
-                    sourceStream.CopyTo(sourceMemoryStream);
-                    var bytes = sourceMemoryStream.ToArray();
-                    base64String = Convert.ToBase64String(bytes, 0, bytes.Length);
-                }
-            }
-            return base64String;
-        }
-
-        private Dimensions GetImageDimensions(IFormFile file)
-        {
-            //would this be better done in javascript on the client? http://stackoverflow.com/questions/2865017/get-image-dimensions-using-javascript-during-file-upload
-            Dimensions dimensions = new Dimensions();
-            using (var sourceStream = file.OpenReadStream())
-            {
-                //this has a dependency on System.Drawing from .net 4.x, but there is not yet a good solution for image handling in asp.net core 1.0. See http://www.hanselman.com/blog/RFCServersideImageAndGraphicsProcessingWithNETCoreAndASPNET5.aspx
-                using (var image = System.Drawing.Image.FromStream(sourceStream))
-                {
-                    dimensions.Height = image.Height;
-                    dimensions.Width = image.Width;
-                }
-            }
-            return dimensions;
-        }
-
 
     }
 }

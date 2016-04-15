@@ -176,14 +176,14 @@
                     $('#result').append(rect);
 
                     //add popover
-                    var popoverBody = "Happiness: " + value.scores.happinessDisplay
-                        + "<br>Fear: " + value.scores.fearDisplay
-                        + "<br>Anger: " + value.scores.angerDisplay
-                        + "<br>Contempt: " + value.scores.contemptDisplay
-                        + "<br>Disgust: " + value.scores.disgustDisplay
-                        + "<br>Neutral: " + value.scores.neutralDisplay
-                        + "<br>Sadness: " + value.scores.sadnessDisplay
-                        + "<br>Surprise: " + value.scores.surpriseDisplay;
+                    var popoverBody = "Happiness: " + Number((value.scores.happiness).toFixed(2))
+                        + "<br>Fear: " + Number((value.scores.fear).toFixed(2))
+                        + "<br>Anger: " + Number((value.scores.anger).toFixed(2))
+                        + "<br>Contempt: " + Number((value.scores.contempt).toFixed(2))
+                        + "<br>Disgust: " + Number((value.scores.disgust).toFixed(2))
+                        + "<br>Neutral: " + Number((value.scores.neutral).toFixed(2))
+                        + "<br>Sadness: " + Number((value.scores.sadness).toFixed(2))
+                        + "<br>Surprise: " + Number((value.scores.surprise).toFixed(2));
                     $('#rect' + index).popover({
                         title: "How is #" + (index + 1) + " feeling?",
                         content: popoverBody,
