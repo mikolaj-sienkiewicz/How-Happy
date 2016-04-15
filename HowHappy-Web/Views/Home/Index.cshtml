@@ -7,7 +7,7 @@
 <div id="home-container">
     <div class="row">
         <div class="col-md-12">
-            <form asp-action="Result2" enctype="multipart/form-data" id="upload-form" >
+            <form asp-action="Result2" enctype="multipart/form-data" id="upload-form">
 
                 <h1>How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
 
@@ -41,7 +41,7 @@
 
             </div>
 
-            <div id="result" >
+            <div id="result">
 
             </div>
         </div>
@@ -105,8 +105,7 @@
 
             }
 
-            function ShowImage()
-            {
+            function ShowImage() {
                 //clear existing result
                 $("#resultDetails").html("Working on it <i class=\"fa fa-circle-o-notch fa-spin\"></i>");
                 $("#result").html("");
@@ -118,7 +117,6 @@
                 $("#Emotion").show();
 
                 //initial page style
-                //$('h1').css("text-align", "left");
                 $('h1').css("font-size", "5rem");
                 $('#home-container').css("padding-top", "0px");
                 $('#Emotion').css("font-size", "5rem");
@@ -133,9 +131,8 @@
                 fr.readAsDataURL(file);
 
                 function createImage() {
-                    var img = document.createElement('img');
-                    img.src = fr.result; img.id = "photo";
-                    $('#result').append(img)
+                    //add image to div
+                    $('#result').prepend($('<img>', { id: 'photo', src: fr.result }))
 
                     //set the result div to the width of the image so that the rectangles line up
                     $('#result').css("width", $('#photo').width());
@@ -158,7 +155,7 @@
 
                 //draw rectangle for each face
                 $.each(data.Faces, function (index, value) {
-                    console.log(value);
+
                     var rect = document.createElement('div');
                     rect.className = "rect";
                     rect.style.height = value.faceRectangle.height + "px";
