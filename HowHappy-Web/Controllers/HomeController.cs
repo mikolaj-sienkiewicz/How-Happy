@@ -24,17 +24,11 @@ namespace HowHappy_Web.Controllers
         //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
         public const string _apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
-        IApplicationEnvironment hostingEnvironment;
-        public HomeController(IApplicationEnvironment _hostingEnvironment)
-        {
-            hostingEnvironment = _hostingEnvironment;
-        }
-
-        public IActionResult Index2()
+        public IActionResult Index()
         {
             //create view model
             var emotion = "happiness";
-            var vm = new Result2ViewModel()
+            var vm = new ResultViewModel()
             {
                 Faces = null,
                 Emotion = emotion,
@@ -70,7 +64,7 @@ namespace HowHappy_Web.Controllers
             var faces = GetFaces(emotionData);
 
             //create view model
-            var vm = new Result2ViewModel()
+            var vm = new ResultViewModel()
             {
                 Faces = GetSortedFacesList(faces, emotion),
                 Emotion = emotion,
@@ -157,11 +151,6 @@ namespace HowHappy_Web.Controllers
             }
         }
 
-        public IActionResult Error()
-        {
-            return View();
-        }
-
         private SelectList GetEmotionSelectList()
         {
             var emotionsList = new List<Emotion>();
@@ -238,6 +227,11 @@ namespace HowHappy_Web.Controllers
             }
 
             return responseString;
+        }
+
+        public IActionResult Error()
+        {
+            return View();
         }
 
     }

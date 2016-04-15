@@ -7,7 +7,7 @@ using Microsoft.AspNet.Mvc.Rendering;
 
 namespace HowHappy_Web.ViewModels
 {
-    public class Result2ViewModel
+    public class ResultViewModel
     {
         public  List<Face> Faces { get; set; }
 
