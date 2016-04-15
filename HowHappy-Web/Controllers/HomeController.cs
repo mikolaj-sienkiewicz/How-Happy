@@ -41,7 +41,7 @@ namespace HowHappy_Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Result2()
+        public async Task<IActionResult> Result()
         {
             //get form data
             var emotion = Request.Form.ContainsKey("emotion") ?
@@ -49,7 +49,7 @@ namespace HowHappy_Web.Controllers
                 "happiness";
 
             //get faces list if session data is empty or there is a file in the form
-            if ((string.IsNullOrEmpty(ReadSessionData("emotiondata"))) || (Request.Form.Files.Count > 0))
+            if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
             {
                 //get file from form data
                 var file = Request.Form.Files[0];
