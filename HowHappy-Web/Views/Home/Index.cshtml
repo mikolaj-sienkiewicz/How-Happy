@@ -4,17 +4,16 @@
     ViewData["ThemeColour"] = "FFEA0E";
 }
 
-<div id="home-container" class="">
+<div id="home-container">
     <div class="row">
         <div class="col-md-12">
             <form asp-action="Result2" enctype="multipart/form-data" id="upload-form" >
 
                 <h1>How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
 
-
                 <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the happiest.</p>
 
-                <div id="upload-form-container">
+                <div id="upload-form-inputs">
 
                     <div class="form-group" id="form-file-input">
                         <div class="input-group">
@@ -32,7 +31,6 @@
                     </div>
                 </div>
 
-
             </form>
         </div>
     </div>
@@ -43,7 +41,7 @@
 
             </div>
 
-            <div id="result" style="position: relative;">
+            <div id="result" >
 
             </div>
         </div>
@@ -120,7 +118,7 @@
                 $("#Emotion").show();
 
                 //initial page style
-                $('h1').css("text-align", "left");
+                //$('h1').css("text-align", "left");
                 $('h1').css("font-size", "5rem");
                 $('#home-container').css("padding-top", "0px");
                 $('#Emotion').css("font-size", "5rem");
@@ -136,8 +134,11 @@
 
                 function createImage() {
                     var img = document.createElement('img');
-                    img.src = fr.result;
+                    img.src = fr.result; img.id = "photo";
                     $('#result').append(img)
+
+                    //set the result div to the width of the image so that the rectangles line up
+                    $('#result').css("width", $('#photo').width());
                 }
             }
 
@@ -145,7 +146,6 @@
                 var dataString = JSON.stringify(response);
                 var data = JSON.parse(dataString);
 
-                //$("#resultDetails").text("We found " + data.Faces.length + " faces");
                 $("#resultDetails").html(
                     "<span>We found "
                     + data.Faces.length
@@ -196,9 +196,6 @@
                     $('.rect').css("border-color", "#" + data.ThemeColour);
                     $('.rank').css("color", "#" + data.ThemeColour);
                     $('.popover-title').css("background-color", "#" + data.ThemeColour);
-                    $('h1').css("text-align", "left");
-
-
                 });
             }
 
