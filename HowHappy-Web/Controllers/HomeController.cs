@@ -28,9 +28,9 @@ namespace HowHappy_Web.Controllers
         {
             //create view model
             var emotion = "happiness";
-            var vm = new ResultViewModel()
+            var vm = new TestResultViewModel()
             {
-                Faces = null,
+                FacesJson = string.Empty,
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = GetThemeColour(emotion),
@@ -56,9 +56,9 @@ namespace HowHappy_Web.Controllers
             var faces = GetFaces(emotionData);
 
             //create view model
-            var vm = new ResultViewModel()
+            var vm = new TestResultViewModel()
             {
-                Faces = GetSortedFacesList(faces, emotion),
+                FacesJson = JsonConvert.SerializeObject(GetSortedFacesList(faces, emotion)),
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = GetThemeColour(emotion),
