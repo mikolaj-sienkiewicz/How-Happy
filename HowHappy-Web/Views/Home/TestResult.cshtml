@@ -51,11 +51,11 @@
             $("#Emotion").hide();
 
             $("#upload-button").click(function (evt) {
-                SubmitForm();
+                ShowImage();
             });
 
             $("#Emotion").change(function (evt) {
-                SubmitForm();
+                $("#upload-form").submit();
             });
 
             function SubmitForm() {
