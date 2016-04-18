@@ -24,50 +24,6 @@ namespace HowHappy_Web.Controllers
         //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
         public const string _apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
-        public IActionResult TestResult()
-        {
-            //create view model
-            var emotion = "happiness";
-            var vm = new TestResultViewModel()
-            {
-                FacesJson = string.Empty,
-                Emotion = emotion,
-                Emotions = GetEmotionSelectList(),
-                ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion)
-            };
-
-            return View(vm);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> TestResult(IFormFile file, string emotion)
-        {
-            //get faces list if session data is empty or there is a file in the form
-            if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
-            {
-                //get emotion data from api and store it in session
-                var emotionDataString = await GetEmotionData(file);
-                SetSessionData("emotiondata", emotionDataString);
-            }
-
-            //get faces list
-            var emotionData = ReadSessionData("emotiondata");
-            var faces = GetFaces(emotionData);
-
-            //create view model
-            var vm = new TestResultViewModel()
-            {
-                FacesJson = JsonConvert.SerializeObject(GetSortedFacesList(faces, emotion)),
-                Emotion = emotion,
-                Emotions = GetEmotionSelectList(),
-                ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion)
-            };
-
-            return View(vm);
-        }
-
         public IActionResult Index()
         {
             //clear any existing session data
