@@ -1,0 +1,51 @@
+﻿@model HowHappyRC2.ViewModels.ResultViewModel
+@{
+    ViewData["Title"] = "Upload a photo with faces in it";
+    ViewData["ThemeColour"] = "FFEA0E";
+}
+
+<div id="home-container">
+    <div class="row">
+        <div class="col-md-12">
+
+            <form asp-action="Result" enctype="multipart/form-data" id="upload-form">
+
+                <h1>How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
+
+                <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the happiest.</p>
+
+                <div id="upload-form-inputs">
+
+                    <div class="form-group" id="form-file-input">
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <span class="btn btn-default btn-file">
+                                    Browse <input type="file" name="file" id="file" class="form-control input-lg">
+                                </span>
+                            </span>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="form-submit-button">
+                        <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="resultDetails"></div>
+            <div id="result"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+}
