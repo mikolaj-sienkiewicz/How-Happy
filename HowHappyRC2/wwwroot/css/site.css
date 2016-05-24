@@ -1,5 +1,10 @@
-﻿body {
-    padding-bottom: 20px;
+﻿html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
 }
 
 h1, h2, h3, h4 {
@@ -131,4 +136,13 @@ input[readonly] {
 #resultDetails {
     font-size: 3rem;
     text-align: center;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  text-align: center;
 }
