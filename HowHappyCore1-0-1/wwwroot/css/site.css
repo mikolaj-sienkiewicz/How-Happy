@@ -1,0 +1,148 @@
+﻿html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+h1, h2, h3, h4 {
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 7rem;
+    text-align: center;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+@media (min-width: 768px) {
+    .carousel-caption {
+        z-index: 10 !important;
+    }
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        background: red;
+        cursor: inherit;
+        display: block;
+    }
+
+input[readonly] {
+    background-color: white !important;
+    cursor: text !important;
+}
+
+
+.rect {
+    position: absolute;
+    border-color: #FFEA0E;
+    border-style: solid;
+    border-width: 4px;
+    z-index: 10;
+}
+
+.rank {
+    position: absolute;
+    color: #FFEA0E;
+    font-size: 2rem;
+    width: 250px;
+    top: -25px;
+    max-width: 100%;
+}
+
+
+.btn-primary, .btn-primary:focus, .btn-primary.focus {
+    background-color: #808080;
+    border-color: #808080;
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 2rem;
+}
+
+#submit-button:hover {
+    background-color: #778BFB;
+    border-color: #778BFB;
+}
+
+.btn-file:hover {
+    color: black;
+}
+
+/*.popover-title {
+    background-color: #FFEA0E;
+}*/
+
+#upload-form {
+    margin: 0 auto;
+    text-align: center;
+}
+
+#upload-form-inputs {
+    max-width: 400px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+#home-container {
+    padding-top: 70px;
+}
+
+    #home-container p, #home-container span {
+        text-align: center;
+    }
+
+#browse-button {
+    display: block;
+    margin: 0px auto;
+    text-align: center;
+}
+
+#Emotion {
+    width: auto;
+    font-family: "blackoutmidnight", Arial, sans-serif;
+    font-size: 7rem;
+    display: inline;
+}
+
+#result {
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    width: auto;
+}
+
+#resultDetails {
+    font-size: 3rem;
+    text-align: center;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  text-align: center;
+}
