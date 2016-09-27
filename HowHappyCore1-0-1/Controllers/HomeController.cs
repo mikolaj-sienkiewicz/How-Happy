@@ -17,12 +17,13 @@ namespace HowHappyCore.Controllers
 {
     public class HomeController : Controller
     {
-        //_apiKey: Replace this with your own Project Oxford Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion 
+        //_apiKey: Replace this with your own Cognitive Services Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion 
         public const string _emotionApiKey = "1dd1f4e23a5743139399788aa30a7153";
 
-        //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
+        //_apiUrl: The base URL for the Emotion API. Find out what this is for other APIs via the API documentation
         public const string _emotionApiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
 
+        //_apiUrl: The base URL for the LUIS API. Find out what this is for other APIs via the API documentation
         public const string _luisApiUrl = "https://api.projectoxford.ai/luis/v1/application?";
 
         public const string _luisApiAppId = "f91bf390-537f-4e76-809d-eb34c2ed1ac4";

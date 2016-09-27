@@ -11,7 +11,7 @@ $(document).ready(function () {
     $("#form-submit-button").show();
     $("#intro-text").show();
     $("#Emotion").hide();
-    $("#LuisQuery").hide();
+    $("#luisprompt").hide();
 
     $("#upload-button").click(function (evt) {
         SubmitForm();
@@ -70,7 +70,7 @@ $(document).ready(function () {
         $("#form-submit-button").hide();
         $("#intro-text").hide();
         $("#Emotion").show();
-        $("#LuisQuery").show();
+        $("#luisprompt").show();
 
         //initial page style
         $('h1').css("font-size", "5rem");
@@ -102,11 +102,11 @@ $(document).ready(function () {
         $("#resultDetails").html(
             "<span>We found "
             + data.faces.length
+            + " faces. We sorted them by "
+            + data.emotion
             + " <i class=\"fa "
-            + data.faemotionclass
+            + data.faEmotionClass
             + " fa-lg\"></i>"
-            + " faces"
-            + " <a href=\"/\" class=\"btn btn-default\">Try again</a>"
             + "</span>");
 
         //draw rectangle for each face
@@ -145,10 +145,10 @@ $(document).ready(function () {
             });
 
             //page styling
-            $("body").css("background-color", "#" + data.ThemeColour);
-            $('.rect').css("border-color", "#" + data.ThemeColour);
-            $('.rank').css("color", "#" + data.ThemeColour);
-            $('.popover-title').css("background-color", "#" + data.ThemeColour);
+            $("body").css("background-color", "#" + data.themeColour);
+            $('.rect').css("border-color", "#" + data.themeColour);
+            $('.rank').css("color", "#" + data.themeColour);
+            $('.popover-title').css("background-color", "#" + data.themeColour);
         });
     }
 

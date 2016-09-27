@@ -10,11 +10,12 @@
 
             <form asp-action="Result" enctype="multipart/form-data" id="upload-form">
 
-                <h1>How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
+                <h1 class="hidden">How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
+                <h1>How Are You?</h1>
 
-                <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the happiest.</p>
+                <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the most emotional.</p>
 
-                <p  class="lead"><input asp-for="LuisQuery"  /></p>
+                <p class="lead" id="luisprompt">Question: <input asp-for="LuisQuery" placeholder="Who is the happiest" /></p>
 
                 <div id="upload-form-inputs">
 
