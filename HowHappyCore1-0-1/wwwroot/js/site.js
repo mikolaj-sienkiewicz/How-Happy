@@ -11,6 +11,7 @@ $(document).ready(function () {
     $("#form-submit-button").show();
     $("#intro-text").show();
     $("#Emotion").hide();
+    $("#LuisQuery").hide();
 
     $("#upload-button").click(function (evt) {
         SubmitForm();
@@ -18,6 +19,12 @@ $(document).ready(function () {
 
     $("#Emotion").change(function (evt) {
         SubmitForm();
+    });
+
+    $('#LuisQuery').keydown(function (evt) {
+        if (evt.keyCode == 13) {
+            SubmitForm();
+        }
     });
 
     function SubmitForm() {
@@ -63,6 +70,7 @@ $(document).ready(function () {
         $("#form-submit-button").hide();
         $("#intro-text").hide();
         $("#Emotion").show();
+        $("#LuisQuery").show();
 
         //initial page style
         $('h1').css("font-size", "5rem");

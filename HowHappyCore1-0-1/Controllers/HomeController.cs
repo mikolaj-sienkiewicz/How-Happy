@@ -11,16 +11,23 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Encodings.Web;
 
 namespace HowHappyCore.Controllers
 {
     public class HomeController : Controller
     {
         //_apiKey: Replace this with your own Project Oxford Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion 
-        public const string _apiKey = "1dd1f4e23a5743139399788aa30a7153";
+        public const string _emotionApiKey = "1dd1f4e23a5743139399788aa30a7153";
 
         //_apiUrl: The base URL for the API. Find out what this is for other APIs via the API documentation
-        public const string _apiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+        public const string _emotionApiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+
+        public const string _luisApiUrl = "https://api.projectoxford.ai/luis/v1/application?";
+
+        public const string _luisApiAppId = "f91bf390-537f-4e76-809d-eb34c2ed1ac4";
+
+        public const string _luisApiKey = "d004b0b064694dd1bec537e3629863fb";
 
         public IActionResult Index()
         {
@@ -50,6 +57,15 @@ namespace HowHappyCore.Controllers
             var emotion = Request.Form.ContainsKey("emotion") ?
                 Request.Form["emotion"].ToString() :
                 "happiness";
+            var luisQuery = Request.Form.ContainsKey("luisquery") ?
+                Request.Form["luisquery"].ToString() :
+                string.Empty;
+
+            //get emotion from luis if we have a luis query
+            if (!string.IsNullOrEmpty(luisQuery))
+            {
+                emotion = await GetEmotionFromLUIS(luisQuery);
+            }
 
             //get faces list if session data is empty or there is a file in the form
             if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
@@ -219,16 +235,57 @@ namespace HowHappyCore.Controllers
             using (var httpClient = new HttpClient())
             {
                 //setup HttpClient with content
-                httpClient.BaseAddress = new Uri(_apiUrl);
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _apiKey);
+                httpClient.BaseAddress = new Uri(_emotionApiUrl);
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _emotionApiKey);
                 var content = new StreamContent(file.OpenReadStream());
                 content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
 
                 //make request
-                var responseMessage = await httpClient.PostAsync(_apiUrl, content);
+                var responseMessage = await httpClient.PostAsync(_emotionApiUrl, content);
 
                 //read response as a json string
                 responseString = await responseMessage.Content.ReadAsStringAsync();
+            }
+
+            return responseString;
+        }
+
+        private async Task<string> GetEmotionFromLUIS(string utterance)
+        {
+            var responseString = string.Empty;
+
+            //call emotion api
+            using (var httpClient = new HttpClient())
+            {
+                //setup HttpClient with content
+                httpClient.BaseAddress = new Uri(_luisApiUrl);
+
+                //https://api.projectoxford.ai/luis/v1/application?id=f91bf390-537f-4e76-809d-eb34c2ed1ac4&subscription-key=d004b0b064694dd1bec537e3629863fb&q=who%20is%20the%20happiest
+                var queryUrl = _luisApiUrl + "id=" + _luisApiAppId + "&subscription-key=" + _luisApiKey + "&q=" + UrlEncoder.Default.Encode(utterance);
+
+                //make request
+                var responseMessage = await httpClient.GetAsync(queryUrl);
+
+                //read response as a json string
+                responseString = await responseMessage.Content.ReadAsStringAsync();
+
+
+                //deserialise json to luis response
+                var luisResult = JsonConvert.DeserializeObject<LuisResult>(responseString);
+
+                //get the emotion intent
+                if (luisResult.entities.Count > 0)
+                {
+                    var entity = luisResult.entities.FirstOrDefault();
+                    //strip emotion:: from the start of type
+                    var emotion = entity.type.Substring(9);
+                    responseString = emotion;
+                }
+                else
+                {
+                    responseString = "happiness";
+                }
+
             }
 
             return responseString;
