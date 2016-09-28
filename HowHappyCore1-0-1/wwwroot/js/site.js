@@ -104,11 +104,14 @@ $(document).ready(function () {
             case "MostEmotional":
                 DisplaySpecificPosition(data, 1)
                 break;
+            case "LeastEmotional":
+                DisplayLeastEmotional(data)
+                break;
             case "SortedByEmotion":
                 DisplaySortedByEmotion(data)
                 break;
             case "SpecificPosition":
-                if (data.ordinal = -1) {
+                if (data.ordinal == -1) {
                     DisplaySpecificPosition(data, 1)
                 }
                 else {
@@ -116,7 +119,7 @@ $(document).ready(function () {
                 }
                 break;
             default:
-                if (data.intent != "") {
+                if (data.intent !== "") {
                     $("#resultDetails").html("<span>I could not figure out your intent, please rephrase the question</span>");
                 }
                 else {
@@ -137,6 +140,9 @@ $(document).ready(function () {
             + data.faces.length
             + " faces with "
             + data.emotion
+            + " <i class=\"fa "
+            + data.faEmotionClass
+            + " fa-lg\"></i>"
             + ". We're showing number "
             + position
             + "</span>");
@@ -144,6 +150,23 @@ $(document).ready(function () {
         var faceData = data.faces[position - 1];
 
         DrawFaceRectangle(position - 1, faceData);
+    }
+
+    function DisplayLeastEmotional(data) {
+        $("#resultDetails").html(
+            "<span>We found "
+            + data.faces.length
+            + " faces with "
+            + data.emotion
+            + " <i class=\"fa "
+            + data.faEmotionClass
+            + " fa-lg\"></i>"
+            + ". This is the last one"
+            + "</span>");
+
+        var faceData = data.faces[data.faces.length];
+
+        DrawFaceRectangle(data.faces.length, faceData);
     }
 
     function DisplaySortedByEmotion(data)

@@ -26,7 +26,7 @@ namespace HowHappyCore.Controllers
         //_apiUrl: The base URL for the LUIS API. Find out what this is for other APIs via the API documentation
         public const string _luisApiUrl = "https://api.projectoxford.ai/luis/v1/application?";
 
-        public const string _luisApiAppId = "f91bf390-537f-4e76-809d-eb34c2ed1ac4";
+        public const string _luisApiAppId = "203dc1be-487f-4aff-b873-2ffa25e4e86b";
 
         public const string _luisApiKey = "d004b0b064694dd1bec537e3629863fb";
 
