@@ -11,7 +11,7 @@ $(document).ready(function () {
     $("#form-submit-button").show();
     $("#intro-text").show();
     $("#Emotion").hide();
-    $("#luisprompt").hide();
+    $("#LuisQuery").hide();
 
     $("#upload-button").click(function (evt) {
         SubmitForm();
@@ -70,7 +70,7 @@ $(document).ready(function () {
         $("#form-submit-button").hide();
         $("#intro-text").hide();
         $("#Emotion").show();
-        $("#luisprompt").show();
+        $("#LuisQuery").show();
 
         //initial page style
         $('h1').css("font-size", "5rem");
@@ -99,6 +99,55 @@ $(document).ready(function () {
         var dataString = JSON.stringify(response);
         var data = JSON.parse(dataString);
 
+        switch (data.intent)
+        {
+            case "MostEmotional":
+                DisplaySpecificPosition(data, 1)
+                break;
+            case "SortedByEmotion":
+                DisplaySortedByEmotion(data)
+                break;
+            case "SpecificPosition":
+                if (data.ordinal = -1) {
+                    DisplaySpecificPosition(data, 1)
+                }
+                else {
+                    DisplaySpecificPosition(data, data.ordinal)
+                }
+                break;
+            default:
+                if (data.intent != "") {
+                    $("#resultDetails").html("<span>I could not figure out your intent, please rephrase the question</span>");
+                }
+                else {
+                    $("#resultDetails").html("<span>What would you like to know? Ask me a question about the emotions of the people in this picture</span>");
+                }
+        }
+
+        //page styling
+        $("body").css("background-color", "#" + data.themeColour);
+        $('.rect').css("border-color", "#" + data.themeColour);
+        $('.rank').css("color", "#" + data.themeColour);
+        $('.popover-title').css("background-color", "#" + data.themeColour);
+    }
+
+    function DisplaySpecificPosition(data, position) {
+        $("#resultDetails").html(
+            "<span>We found "
+            + data.faces.length
+            + " faces with "
+            + data.emotion
+            + ". We're showing number "
+            + position
+            + "</span>");
+
+        var faceData = data.faces[position - 1];
+
+        DrawFaceRectangle(position - 1, faceData);
+    }
+
+    function DisplaySortedByEmotion(data)
+    {
         $("#resultDetails").html(
             "<span>We found "
             + data.faces.length
@@ -111,44 +160,42 @@ $(document).ready(function () {
 
         //draw rectangle for each face
         $.each(data.faces, function (index, value) {
+            DrawFaceRectangle(index, value);
+        });
+    }
 
-            var rect = document.createElement('div');
-            rect.className = "rect";
-            rect.style.height = value.faceRectangle.height + "px";
-            rect.style.width = value.faceRectangle.width + "px";
-            rect.style.left = value.faceRectangle.left + "px";
-            rect.style.top = value.faceRectangle.top + "px";
-            rect.id = "rect" + index;
+    function DrawFaceRectangle(index, value)
+    {
+        var rect = document.createElement('div');
+        rect.className = "rect";
+        rect.style.height = value.faceRectangle.height + "px";
+        rect.style.width = value.faceRectangle.width + "px";
+        rect.style.left = value.faceRectangle.left + "px";
+        rect.style.top = value.faceRectangle.top + "px";
+        rect.id = "rect" + index;
 
-            var rank = document.createElement('div');
-            rank.className = "rank";
-            rank.innerHTML = "#" + (index + 1);
+        var rank = document.createElement('div');
+        rank.className = "rank";
+        rank.innerHTML = "#" + (index + 1);
 
-            rect.appendChild(rank);
+        rect.appendChild(rank);
 
-            $('#result').append(rect);
+        $('#result').append(rect);
 
-            //add popover
-            var popoverBody = "Happiness: " + Number((value.scores.happiness).toFixed(2))
-                + "<br>Fear: " + Number((value.scores.fear).toFixed(2))
-                + "<br>Anger: " + Number((value.scores.anger).toFixed(2))
-                + "<br>Contempt: " + Number((value.scores.contempt).toFixed(2))
-                + "<br>Disgust: " + Number((value.scores.disgust).toFixed(2))
-                + "<br>Neutral: " + Number((value.scores.neutral).toFixed(2))
-                + "<br>Sadness: " + Number((value.scores.sadness).toFixed(2))
-                + "<br>Surprise: " + Number((value.scores.surprise).toFixed(2));
-            $('#rect' + index).popover({
-                title: "How is #" + (index + 1) + " feeling?",
-                content: popoverBody,
-                html: "true",
-                trigger: "click"
-            });
-
-            //page styling
-            $("body").css("background-color", "#" + data.themeColour);
-            $('.rect').css("border-color", "#" + data.themeColour);
-            $('.rank').css("color", "#" + data.themeColour);
-            $('.popover-title').css("background-color", "#" + data.themeColour);
+        //add popover
+        var popoverBody = "Happiness: " + Number((value.scores.happiness).toFixed(2))
+            + "<br>Fear: " + Number((value.scores.fear).toFixed(2))
+            + "<br>Anger: " + Number((value.scores.anger).toFixed(2))
+            + "<br>Contempt: " + Number((value.scores.contempt).toFixed(2))
+            + "<br>Disgust: " + Number((value.scores.disgust).toFixed(2))
+            + "<br>Neutral: " + Number((value.scores.neutral).toFixed(2))
+            + "<br>Sadness: " + Number((value.scores.sadness).toFixed(2))
+            + "<br>Surprise: " + Number((value.scores.surprise).toFixed(2));
+        $('#rect' + index).popover({
+            title: "How is #" + (index + 1) + " feeling?",
+            content: popoverBody,
+            html: "true",
+            trigger: "click"
         });
     }
 

@@ -61,11 +61,16 @@ namespace HowHappyCore.Controllers
             var luisQuery = Request.Form.ContainsKey("luisquery") ?
                 Request.Form["luisquery"].ToString() :
                 string.Empty;
+            var intent = string.Empty;
+            var ordinal = -1;
 
             //get emotion from luis if we have a luis query
             if (!string.IsNullOrEmpty(luisQuery))
             {
-                emotion = await GetEmotionFromLUIS(luisQuery);
+                var luisResponse = await GetLUISData(luisQuery);
+                intent = GetLuisIntent(luisResponse);
+                emotion = GetLuisEmotion(luisResponse);
+                ordinal = GetLuisOridinal(luisResponse);
             }
 
             //get faces list if session data is empty or there is a file in the form
@@ -90,7 +95,9 @@ namespace HowHappyCore.Controllers
                 Emotion = emotion,
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion)
+                FAEmotionClass = GetEmojiClass(emotion),
+                Intent = intent,
+                Ordinal = ordinal
             };
 
             return Json(vm);
@@ -251,10 +258,8 @@ namespace HowHappyCore.Controllers
             return responseString;
         }
 
-        private async Task<string> GetEmotionFromLUIS(string utterance)
+        private async Task<LuisResult> GetLUISData(string utterance)
         {
-            var responseString = string.Empty;
-
             //call emotion api
             using (var httpClient = new HttpClient())
             {
@@ -268,28 +273,51 @@ namespace HowHappyCore.Controllers
                 var responseMessage = await httpClient.GetAsync(queryUrl);
 
                 //read response as a json string
-                responseString = await responseMessage.Content.ReadAsStringAsync();
-
+                var responseString = await responseMessage.Content.ReadAsStringAsync();
 
                 //deserialise json to luis response
-                var luisResult = JsonConvert.DeserializeObject<LuisResult>(responseString);
-
-                //get the emotion intent
-                if (luisResult.entities.Count > 0)
-                {
-                    var entity = luisResult.entities.FirstOrDefault();
-                    //strip emotion:: from the start of type
-                    var emotion = entity.type.Substring(9);
-                    responseString = emotion;
-                }
-                else
-                {
-                    responseString = "happiness";
-                }
-
+                return JsonConvert.DeserializeObject<LuisResult>(responseString);
             }
 
-            return responseString;
+        }
+
+        private string GetLuisIntent(LuisResult luisResult) => luisResult.intents.FirstOrDefault().intent;
+
+        private string GetLuisEmotion(LuisResult luisResult)
+        {
+            //set default demotion
+            var emotion = string.Empty;
+
+            if (luisResult.entities.Count > 0)
+            {
+                var entity = luisResult.entities.Where(o => o.type.Contains("emotion::")).FirstOrDefault();
+                if (entity != null)
+                {
+                    //strip emotion:: from the start of type
+                    emotion = entity.type.Substring(9);
+                }
+            }
+
+            return emotion;
+        }
+
+        private int GetLuisOridinal(LuisResult luisResult)
+        {
+            //set default demotion
+            var ordinal = -1;
+
+            if (luisResult.entities.Count > 0)
+            {
+                var entity = luisResult.entities.Where(o => o.type == "builtin.ordinal").FirstOrDefault();
+                if (entity != null)
+                {
+                    //strip emotion:: from the start of type
+                    var ordinalString = entity.entity.Substring(0,1);
+                    ordinal = Convert.ToInt16(ordinalString);
+                }
+            }
+
+            return ordinal;
         }
 
         public IActionResult Error() => View();

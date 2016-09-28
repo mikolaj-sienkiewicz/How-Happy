@@ -13,6 +13,10 @@ namespace HowHappy.ViewModels
 
         public string Emotion { get; set; }
 
+        public string Intent { get; set; }
+
+        public int Ordinal { get; set; }
+
         public string LuisQuery { get; set; }
 
         public SelectList Emotions { get; set; }

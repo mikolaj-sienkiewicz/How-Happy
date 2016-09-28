@@ -15,10 +15,14 @@
 
                 <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the most emotional.</p>
 
-                <p class="lead" id="luisprompt">Question: <input asp-for="LuisQuery" placeholder="Who is the happiest" /></p>
+                <div class="container" id="LuisQuery">
+                    <div class="form-group">
+                        <label for="LuisQuery">Question</label>
+                        <input asp-for="LuisQuery" class="form-control" />
+                    </div>
+                </div>
 
                 <div id="upload-form-inputs">
-
                     <div class="form-group" id="form-file-input">
                         <div class="input-group">
                             <span class="input-group-btn">
