@@ -11,7 +11,7 @@ $(document).ready(function () {
     $("#form-submit-button").show();
     $("#intro-text").show();
     $("#Emotion").hide();
-    //$("#LuisQuery").hide();
+    $("#LuisQuery").hide();
 
     $("#upload-button").click(function (evt) {
         SubmitImageForm();
@@ -69,7 +69,7 @@ $(document).ready(function () {
         $("#form-submit-button").hide();
         $("#intro-text").hide();
         $("#Emotion").show();
-        //$("#LuisQuery").show();
+        $("#LuisQuery").show();
 
         //initial page style
         $('h1').css("font-size", "5rem");
