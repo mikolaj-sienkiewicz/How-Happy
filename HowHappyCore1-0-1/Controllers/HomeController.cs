@@ -36,43 +36,52 @@ namespace HowHappyCore.Controllers
             SetSessionData("emotiondata", string.Empty);
 
             //create view model
-            var emotion = "happiness";
             var vm = new ResultViewModel()
             {
                 Faces = null,
-                Emotion = emotion,
+                Emotion = string.Empty,
                 Emotions = GetEmotionSelectList(),
-                ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion)
+                ThemeColour = GetThemeColour("happiness"),
+                FAEmotionClass = GetEmojiClass("happiness"),
+                Intent = string.Empty,
+                Ordinal = -1
             };
 
             return View(vm);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Luis()
+        {
+            //analyse luis query
+            var luisQuery = Request.Form["luisquery"].ToString();
+            var luisResponse = await GetLUISData(luisQuery);
+            var intent = GetLuisIntent(luisResponse);
+            var emotion = GetLuisEmotion(luisResponse);
+            var ordinal = GetLuisOridinal(luisResponse);
 
+            //get faces list
+            var emotionData = ReadSessionData("emotiondata");
+            var faces = GetFaces(emotionData);
+
+            //create view model
+            var vm = new ResultViewModel()
+            {
+                Faces = GetSortedFacesList(faces, emotion),
+                Emotion = emotion,
+                Emotions = GetEmotionSelectList(),
+                ThemeColour = GetThemeColour(emotion),
+                FAEmotionClass = GetEmojiClass(emotion),
+                Intent = intent,
+                Ordinal = ordinal
+            };
+
+            return Json(vm);
+        }
 
         [HttpPost]
         public async Task<IActionResult> Result()
         {
-            //get form data
-            var emotion = Request.Form.ContainsKey("emotion") ?
-                Request.Form["emotion"].ToString() :
-                "happiness";
-            var luisQuery = Request.Form.ContainsKey("luisquery") ?
-                Request.Form["luisquery"].ToString() :
-                string.Empty;
-            var intent = string.Empty;
-            var ordinal = -1;
-
-            //get emotion from luis if we have a luis query
-            if (!string.IsNullOrEmpty(luisQuery))
-            {
-                var luisResponse = await GetLUISData(luisQuery);
-                intent = GetLuisIntent(luisResponse);
-                emotion = GetLuisEmotion(luisResponse);
-                ordinal = GetLuisOridinal(luisResponse);
-            }
-
             //get faces list if session data is empty or there is a file in the form
             if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
             {
@@ -89,6 +98,7 @@ namespace HowHappyCore.Controllers
             var faces = GetFaces(emotionData);
 
             //create view model
+            var emotion = "happiness";
             var vm = new ResultViewModel()
             {
                 Faces = GetSortedFacesList(faces, emotion),
@@ -96,8 +106,8 @@ namespace HowHappyCore.Controllers
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = GetThemeColour(emotion),
                 FAEmotionClass = GetEmojiClass(emotion),
-                Intent = intent,
-                Ordinal = ordinal
+                Intent = string.Empty,
+                Ordinal = -1
             };
 
             return Json(vm);

@@ -94,13 +94,13 @@ input[readonly] {
     background-color: #FFEA0E;
 }*/
 
-#upload-form {
+form {
     margin: 0 auto;
     text-align: center;
 }
 
-#upload-form-inputs {
-    max-width: 400px;
+.form-inputs {
+    max-width: 600px;
     text-align: center;
     margin: 0 auto;
 }
@@ -134,7 +134,12 @@ input[readonly] {
 }
 
 #resultDetails {
-    font-size: 3rem;
+    font-size: 2rem;
+    text-align: center;
+}
+
+#luisQuery {
+    font-size: 1rem;
     text-align: center;
 }
 

@@ -8,21 +8,20 @@
     <div class="row">
         <div class="col-md-12">
 
-            <form asp-action="Result" enctype="multipart/form-data" id="upload-form">
+            <h1>How Are You?</h1>
 
-                <h1 class="hidden">How <select asp-for="Emotion" asp-items="@Model.Emotions" class=""></select> Are You?</h1>
-                <h1>How Are You?</h1>
+            <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the most emotional.</p>
 
-                <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the most emotional.</p>
-
-                <div class="container" id="LuisQuery">
+            <form asp-action="Luis" enctype="multipart/form-data" id="luis-form">
+                <div class="form-inputs">
                     <div class="form-group">
-                        <label for="LuisQuery">Question</label>
-                        <input asp-for="LuisQuery" class="form-control" style="max-width:400px; text-align:center; display: inline-block" />
+                        <input asp-for="LuisQuery" class="form-control" style="text-align:center; font-size: 2rem;" />
                     </div>
                 </div>
+            </form>
 
-                <div id="upload-form-inputs">
+            <form asp-action="Result" enctype="multipart/form-data" id="upload-form">
+                <div class="form-inputs">
                     <div class="form-group" id="form-file-input">
                         <div class="input-group">
                             <span class="input-group-btn">
@@ -37,9 +36,7 @@
                     <div class="form-group" id="form-submit-button">
                         <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
                     </div>
-
                 </div>
-
             </form>
 
         </div>

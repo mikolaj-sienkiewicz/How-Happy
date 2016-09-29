@@ -14,20 +14,49 @@ $(document).ready(function () {
     $("#LuisQuery").hide();
 
     $("#upload-button").click(function (evt) {
-        SubmitForm();
+        SubmitImageForm();
     });
 
     $("#Emotion").change(function (evt) {
-        SubmitForm();
+        SubmitImageForm();
     });
 
     $('#LuisQuery').keydown(function (evt) {
         if (evt.keyCode == 13) {
-            SubmitForm();
+            SubmitLuisForm();
         }
     });
 
-    function SubmitForm() {
+    function SubmitLuisForm()
+    {
+        //Display image
+        ShowImage();
+
+        //get form data
+        var fd = new FormData();
+        var other_data = $('form').serializeArray();
+        $.each(other_data, function (key, input) {
+            fd.append(input.name, input.value);
+        });
+
+        //get luis data
+        $.ajax({
+            type: "POST",
+            url: "/home/Luis",
+            contentType: false,
+            processData: false,
+            data: fd,
+            success: function (response) {
+                ProcessResult(response);
+            },
+            error: function (error) {
+                alert("There was error uploading files!");
+                console.log(error.statusText);
+            }
+        });
+    }
+
+    function SubmitImageForm() {
         //Display image
         ShowImage();
 
@@ -50,14 +79,13 @@ $(document).ready(function () {
             processData: false,
             data: fd,
             success: function (response) {
-                ProcessResult(response);
+                $("#resultDetails").html("<span>What would you like to know? Ask me a question about the emotions of the people in this picture</span>");
             },
-            error: function () {
+            error: function (error) {
                 alert("There was error uploading files!");
+                console.log(error.statusText);
             }
         });
-
-
     }
 
     function ShowImage() {
@@ -98,6 +126,8 @@ $(document).ready(function () {
     function ProcessResult(response) {
         var dataString = JSON.stringify(response);
         var data = JSON.parse(dataString);
+
+        console.log("emotion:" +data.emotion +" / intent:" +data.intent +" / ordinal:" +data.ordinal);
 
         switch (data.intent)
         {
@@ -164,9 +194,9 @@ $(document).ready(function () {
             + ". This is the last one"
             + "</span>");
 
-        var faceData = data.faces[data.faces.length];
+        var faceData = data.faces[data.faces.length - 1];
 
-        DrawFaceRectangle(data.faces.length, faceData);
+        DrawFaceRectangle(data.faces.length - 1, faceData);
     }
 
     function DisplaySortedByEmotion(data)
