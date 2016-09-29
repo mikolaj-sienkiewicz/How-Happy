@@ -33,24 +33,22 @@ $(document).ready(function () {
         ShowImage();
 
         //get form data
-        var fd = new FormData();
-        var other_data = $('form').serializeArray();
-        $.each(other_data, function (key, input) {
-            fd.append(input.name, input.value);
-        });
+        //var fd = new FormData();
+        //var other_data = $('form').serializeArray();
+        //$.each(other_data, function (key, input) {
+        //    fd.append(input.name, input.value);
+        //});
 
         //get luis data
         $.ajax({
             type: "POST",
             url: "/home/Luis",
-            contentType: false,
-            processData: false,
-            data: fd,
+            data: $("#luis-form").serialize(),
             success: function (response) {
                 ProcessResult(response);
             },
             error: function (error) {
-                alert("There was error uploading files!");
+                alert("There was error posting the luis query!");
                 console.log(error.statusText);
             }
         });
