@@ -50,37 +50,6 @@ namespace HowHappyCore.Controllers
             return View(vm);
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> Luis()
-        {
-            //analyse luis query
-            var luisQuery = Request.Form["luisquery"].ToString();
-            var luisResponse = await GetLUISData(luisQuery);
-            var intent = GetLuisIntent(luisResponse);
-            var emotion = GetLuisEmotion(luisResponse);
-            var ordinal = GetLuisOridinal(luisResponse);
-
-            //get faces list
-            var emotionData = ReadSessionData("emotiondata");
-            var faces = GetFaces(emotionData);
-
-            //create view model
-            var vm = new ResultViewModel()
-            {
-                Faces = GetSortedFacesList(faces, emotion),
-                Emotion = emotion,
-                Emotions = GetEmotionSelectList(),
-                ThemeColour = GetThemeColour(emotion),
-                FAEmotionClass = GetEmojiClass(emotion),
-                Intent = intent,
-                Ordinal = ordinal,
-                LuisQuery = luisQuery
-            };
-
-            return Json(vm);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Emotion()
         {
@@ -101,7 +70,7 @@ namespace HowHappyCore.Controllers
 
             //analyse luis query
             var luisQuery = String.IsNullOrEmpty(Request.Form["LuisQuery"]) ?
-                "happiness" :
+                "Show me all the happy people" :
                 Request.Form["LuisQuery"].ToString();
             var luisResponse = await GetLUISData(luisQuery);
             var intent = GetLuisIntent(luisResponse);
