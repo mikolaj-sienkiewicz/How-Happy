@@ -32,13 +32,6 @@ $(document).ready(function () {
         //Display image
         ShowImage();
 
-        //get form data
-        //var fd = new FormData();
-        //var other_data = $('form').serializeArray();
-        //$.each(other_data, function (key, input) {
-        //    fd.append(input.name, input.value);
-        //});
-
         //get luis data
         $.ajax({
             type: "POST",
