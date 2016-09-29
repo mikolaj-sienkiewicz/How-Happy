@@ -11,7 +11,7 @@ $(document).ready(function () {
     $("#form-submit-button").show();
     $("#intro-text").show();
     $("#Emotion").hide();
-    $("#LuisQuery").hide();
+    //$("#LuisQuery").hide();
 
     $("#upload-button").click(function (evt) {
         SubmitImageForm();
@@ -23,29 +23,9 @@ $(document).ready(function () {
 
     $('#LuisQuery').keydown(function (evt) {
         if (evt.keyCode == 13) {
-            SubmitLuisForm();
+            SubmitImageForm();
         }
     });
-
-    function SubmitLuisForm()
-    {
-        //Display image
-        ShowImage();
-
-        //get luis data
-        $.ajax({
-            type: "POST",
-            url: "/home/Luis",
-            data: $("#luis-form").serialize(),
-            success: function (response) {
-                ProcessResult(response);
-            },
-            error: function (error) {
-                alert("There was error posting the luis query!");
-                console.log(error.statusText);
-            }
-        });
-    }
 
     function SubmitImageForm() {
         //Display image
@@ -65,12 +45,12 @@ $(document).ready(function () {
         //get emotion data
         $.ajax({
             type: "POST",
-            url: "/home/Result",
+            url: "/home/Emotion",
             contentType: false,
             processData: false,
             data: fd,
             success: function (response) {
-                $("#resultDetails").html("<span>What would you like to know? Ask me a question about the emotions of the people in this picture</span>");
+                ProcessResult(response);
             },
             error: function (error) {
                 alert("There was error uploading files!");
@@ -89,7 +69,7 @@ $(document).ready(function () {
         $("#form-submit-button").hide();
         $("#intro-text").hide();
         $("#Emotion").show();
-        $("#LuisQuery").show();
+        //$("#LuisQuery").show();
 
         //initial page style
         $('h1').css("font-size", "5rem");

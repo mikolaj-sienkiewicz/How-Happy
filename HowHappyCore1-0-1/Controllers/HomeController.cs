@@ -50,6 +50,7 @@ namespace HowHappyCore.Controllers
             return View(vm);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Luis()
         {
@@ -73,14 +74,15 @@ namespace HowHappyCore.Controllers
                 ThemeColour = GetThemeColour(emotion),
                 FAEmotionClass = GetEmojiClass(emotion),
                 Intent = intent,
-                Ordinal = ordinal
+                Ordinal = ordinal,
+                LuisQuery = luisQuery
             };
 
             return Json(vm);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Result()
+        public async Task<IActionResult> Emotion()
         {
             //get faces list if session data is empty or there is a file in the form
             if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
@@ -97,8 +99,16 @@ namespace HowHappyCore.Controllers
             var emotionData = ReadSessionData("emotiondata");
             var faces = GetFaces(emotionData);
 
+            //analyse luis query
+            var luisQuery = String.IsNullOrEmpty(Request.Form["LuisQuery"]) ?
+                "happiness" :
+                Request.Form["LuisQuery"].ToString();
+            var luisResponse = await GetLUISData(luisQuery);
+            var intent = GetLuisIntent(luisResponse);
+            var emotion = GetLuisEmotion(luisResponse);
+            var ordinal = GetLuisOridinal(luisResponse);
+
             //create view model
-            var emotion = "happiness";
             var vm = new ResultViewModel()
             {
                 Faces = GetSortedFacesList(faces, emotion),
@@ -106,8 +116,9 @@ namespace HowHappyCore.Controllers
                 Emotions = GetEmotionSelectList(),
                 ThemeColour = GetThemeColour(emotion),
                 FAEmotionClass = GetEmojiClass(emotion),
-                Intent = string.Empty,
-                Ordinal = -1
+                Intent = intent,
+                Ordinal = ordinal,
+                LuisQuery = luisQuery
             };
 
             return Json(vm);

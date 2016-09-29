@@ -12,15 +12,15 @@
 
             <p class="lead" id="intro-text">Upload a photo with human faces in and see who is the most emotional.</p>
 
-            <form asp-action="Luis" enctype="multipart/form-data" id="luis-form">
+            @*<form asp-action="Luis" id="luis-form">
                 <div class="form-inputs">
                     <div class="form-group">
                         <input asp-for="LuisQuery" class="form-control" style="text-align:center; font-size: 2rem;" />
                     </div>
                 </div>
-            </form>
+            </form>*@
 
-            <form asp-action="Result" enctype="multipart/form-data" id="upload-form">
+            <form asp-action="Emotion" enctype="multipart/form-data" id="upload-form">
                 <div class="form-inputs">
                     <div class="form-group" id="form-file-input">
                         <div class="input-group">
@@ -35,6 +35,12 @@
 
                     <div class="form-group" id="form-submit-button">
                         <button type="button" class="btn btn-primary btn-lg btn-block" id="upload-button"><i class="fa fa-upload"></i> Upload</button>
+                    </div>
+
+                    <div class="form-inputs">
+                        <div class="form-group">
+                            <input asp-for="LuisQuery" class="form-control" style="text-align:center; font-size: 2rem;" />
+                        </div>
                     </div>
                 </div>
             </form>
