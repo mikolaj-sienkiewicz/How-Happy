@@ -139,7 +139,7 @@ $(document).ready(function () {
         $("#resultDetails").html(
             "<span>We found "
             + data.faces.length
-            + " faces with "
+            + " faces showing "
             + data.emotion
             + " <i class=\"fa "
             + data.faEmotionClass
@@ -157,7 +157,7 @@ $(document).ready(function () {
         $("#resultDetails").html(
             "<span>We found "
             + data.faces.length
-            + " faces with "
+            + " faces showing "
             + data.emotion
             + " <i class=\"fa "
             + data.faEmotionClass
