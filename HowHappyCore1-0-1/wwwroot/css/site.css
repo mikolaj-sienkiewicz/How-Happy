@@ -138,9 +138,9 @@ form {
     text-align: center;
 }
 
-#luisQuery {
-    font-size: 1rem;
-    text-align: center;
+#LuisQuery {
+    text-align: center !important;
+    font-size: 2rem;
 }
 
 .footer {
