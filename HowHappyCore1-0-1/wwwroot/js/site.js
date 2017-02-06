@@ -87,7 +87,7 @@ $(document).ready(function () {
 
         function createImage() {
             //add image to div
-            $('#result').append($('<img>', { id: 'photo', src: fr.result }))
+            $('#result').append($('<img>', { id: 'photo', src: fr.result }));
 
             //set the result div to the width of the image so that the rectangles line up
             $('#result').css("width", $('#photo').width());
@@ -103,20 +103,20 @@ $(document).ready(function () {
         switch (data.intent)
         {
             case "MostEmotional":
-                DisplaySpecificPosition(data, 1)
+                DisplaySpecificPosition(data, 1);
                 break;
             case "LeastEmotional":
-                DisplayLeastEmotional(data)
+                DisplayLeastEmotional(data);
                 break;
             case "SortedByEmotion":
-                DisplaySortedByEmotion(data)
+                DisplaySortedByEmotion(data);
                 break;
             case "SpecificPosition":
                 if (data.ordinal == -1) {
-                    DisplaySpecificPosition(data, 1)
+                    DisplaySpecificPosition(data, 1);
                 }
                 else {
-                    DisplaySpecificPosition(data, data.ordinal)
+                    DisplaySpecificPosition(data, data.ordinal);
                 }
                 break;
             default:
@@ -141,6 +141,10 @@ $(document).ready(function () {
             + data.faces.length
             + " faces showing "
             + data.emotion
+            + ". Their average "
+            + data.emotion
+            + " is "
+            + convertToPercent(data.averageEmotionScore)
             + " <i class=\"fa "
             + data.faEmotionClass
             + " fa-lg\"></i>"
@@ -159,6 +163,10 @@ $(document).ready(function () {
             + data.faces.length
             + " faces showing "
             + data.emotion
+            + ". Their average "
+            + data.emotion
+            + " is "
+            + convertToPercent(data.averageEmotionScore)
             + " <i class=\"fa "
             + data.faEmotionClass
             + " fa-lg\"></i>"
@@ -177,6 +185,10 @@ $(document).ready(function () {
             + data.faces.length
             + " faces. We sorted them by "
             + data.emotion
+            + ". Their average "
+            + data.emotion
+            + " is "
+            + convertToPercent(data.averageEmotionScore)
             + " <i class=\"fa "
             + data.faEmotionClass
             + " fa-lg\"></i>"
@@ -207,20 +219,26 @@ $(document).ready(function () {
         $('#result').append(rect);
 
         //add popover
-        var popoverBody = "Happiness: " + Number((value.scores.happiness).toFixed(2))
-            + "<br>Fear: " + Number((value.scores.fear).toFixed(2))
-            + "<br>Anger: " + Number((value.scores.anger).toFixed(2))
-            + "<br>Contempt: " + Number((value.scores.contempt).toFixed(2))
-            + "<br>Disgust: " + Number((value.scores.disgust).toFixed(2))
-            + "<br>Neutral: " + Number((value.scores.neutral).toFixed(2))
-            + "<br>Sadness: " + Number((value.scores.sadness).toFixed(2))
-            + "<br>Surprise: " + Number((value.scores.surprise).toFixed(2));
+        var popoverBody = "Happiness: " + convertToPercent(value.scores.happiness)
+            + "<br>Fear: " + convertToPercent(value.scores.fear)
+            + "<br>Anger: " + convertToPercent(value.scores.anger)
+            + "<br>Contempt: " + convertToPercent(value.scores.contempt)
+            + "<br>Disgust: " + convertToPercent(value.scores.disgust)
+            + "<br>Neutral: " + convertToPercent(value.scores.neutral)
+            + "<br>Sadness: " + convertToPercent(value.scores.sadness)
+            + "<br>Surprise: " + convertToPercent(value.scores.surprise);
+
         $('#rect' + index).popover({
             title: "How is #" + (index + 1) + " feeling?",
             content: popoverBody,
             html: "true",
             trigger: "click"
         });
+    }
+
+    function convertToPercent(number) {
+        var fraction = Number(number.toFixed(2));
+        return (fraction * 100) + '&#37;';
     }
 
     $('.btn-file :file').on('fileselect', function (event, numFiles, label) {

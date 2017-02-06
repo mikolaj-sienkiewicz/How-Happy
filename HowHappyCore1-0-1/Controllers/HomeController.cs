@@ -87,7 +87,8 @@ namespace HowHappyCore.Controllers
                 FAEmotionClass = GetEmojiClass(emotion),
                 Intent = intent,
                 Ordinal = ordinal,
-                LuisQuery = luisQuery
+                LuisQuery = luisQuery,
+                AverageEmotionScore = GetAverageEmotionScore(faces, emotion)
             };
 
             return Json(vm);
@@ -115,6 +116,31 @@ namespace HowHappyCore.Controllers
                     return "FFA500";
                 default:
                     return "FFEA0E";
+            }
+        }
+
+        private double GetAverageEmotionScore(List<Face> faces, string emotion)
+        {
+            switch (emotion)
+            {
+                case "happiness":
+                    return faces.Average(o => o.scores.happiness);
+                case "anger":
+                    return faces.Average(o => o.scores.anger);
+                case "contempt":
+                    return faces.Average(o => o.scores.contempt);
+                case "disgust":
+                    return faces.Average(o => o.scores.disgust);
+                case "fear":
+                    return faces.Average(o => o.scores.fear);
+                case "neutral":
+                    return faces.Average(o => o.scores.neutral);
+                case "sadness":
+                    return faces.Average(o => o.scores.sadness);
+                case "surprise":
+                    return faces.Average(o => o.scores.surprise);
+                default:
+                    return faces.Average(o => o.scores.happiness);
             }
         }
 
