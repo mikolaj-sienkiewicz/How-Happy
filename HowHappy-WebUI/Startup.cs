@@ -27,6 +27,8 @@ namespace HowHappy_WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession();
+
             // Add framework services.
             services.AddMvc();
         }
@@ -48,6 +50,9 @@ namespace HowHappy_WebUI
             }
 
             app.UseStaticFiles();
+
+            // IMPORTANT: This session call MUST go before UseMvc()
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
