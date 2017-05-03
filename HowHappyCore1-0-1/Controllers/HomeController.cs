@@ -24,11 +24,11 @@ namespace HowHappyCore.Controllers
         public const string _emotionApiUrl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
 
         //_apiUrl: The base URL for the LUIS API. Find out what this is for other APIs via the API documentation
-        public const string _luisApiUrl = "https://api.projectoxford.ai/luis/v1/application?";
+        public const string _luisApiUrl = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/";
 
         public const string _luisApiAppId = "203dc1be-487f-4aff-b873-2ffa25e4e86b";
 
-        public const string _luisApiKey = "d004b0b064694dd1bec537e3629863fb";
+        public const string _luisApiKey = "096c53e615d6409ab9cf459f8e2763c9";
 
         public IActionResult Index()
         {
@@ -281,9 +281,9 @@ namespace HowHappyCore.Controllers
             {
                 //setup HttpClient with content
                 httpClient.BaseAddress = new Uri(_luisApiUrl);
-
-                //https://api.projectoxford.ai/luis/v1/application?id=f91bf390-537f-4e76-809d-eb34c2ed1ac4&subscription-key=d004b0b064694dd1bec537e3629863fb&q=who%20is%20the%20happiest
-                var queryUrl = _luisApiUrl + "id=" + _luisApiAppId + "&subscription-key=" + _luisApiKey + "&q=" + UrlEncoder.Default.Encode(utterance);
+                
+                //format should be: https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/203dc1be-487f-4aff-b873-2ffa25e4e86b?subscription-key=096c53e615d6409ab9cf459f8e2763c9&timezoneOffset=0&verbose=true&q=
+                var queryUrl = _luisApiUrl + _luisApiAppId + "?subscription-key=" + _luisApiKey + "&timezoneOffset=0&verbose=true&q=" + UrlEncoder.Default.Encode(utterance);
 
                 //make request
                 var responseMessage = await httpClient.GetAsync(queryUrl);
