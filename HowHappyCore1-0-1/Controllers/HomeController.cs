@@ -21,7 +21,7 @@ namespace HowHappyCore.Controllers
         public const string _emotionApiKey = "1dd1f4e23a5743139399788aa30a7153";
 
         //_apiUrl: The base URL for the Emotion API. Find out what this is for other APIs via the API documentation
-        public const string _emotionApiUrl = "https://api.projectoxford.ai/emotion/v1.0/recognize";
+        public const string _emotionApiUrl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
 
         //_apiUrl: The base URL for the LUIS API. Find out what this is for other APIs via the API documentation
         public const string _luisApiUrl = "https://api.projectoxford.ai/luis/v1/application?";
