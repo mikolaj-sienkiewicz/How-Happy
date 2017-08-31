@@ -18,7 +18,7 @@ namespace HowHappyCore.Controllers
     public class HomeController : Controller
     {
         //_apiKey: Replace this with your own Cognitive Services Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion 
-        public const string _emotionApiKey = "1dd1f4e23a5743139399788aa30a7153";
+        public const string _emotionApiKey = "276eed1a9dd946b7878ddaf021f6a962";
 
         //_apiUrl: The base URL for the Emotion API. Find out what this is for other APIs via the API documentation
         public const string _emotionApiUrl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
