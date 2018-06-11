@@ -9,7 +9,7 @@ namespace HowHappy.ViewModels
 {
     public class ResultViewModel
     {
-        public  List<Face> Faces { get; set; }
+        public  List<FaceDto> Faces { get; set; }
 
         public string Emotion { get; set; }
 

@@ -17,11 +17,11 @@ namespace HowHappyCore.Controllers
 {
     public class HomeController : Controller
     {
-        //_apiKey: Replace this with your own Cognitive Services Emotion API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://www.projectoxford.ai/emotion 
-        public const string _emotionApiKey = "276eed1a9dd946b7878ddaf021f6a962";
+        //_apiKey: Replace this with your own Cognitive Services Face API key, please do not use my key. I include it here so you can get up and running quickly but you can get your own key for free at https://azure.microsoft.com/en-us/services/cognitive-services/face/
+        public const string _faceApiKey = "563d26eccbca4f84ab22bd94be6d1c57";
 
-        //_apiUrl: The base URL for the Emotion API. Find out what this is for other APIs via the API documentation
-        public const string _emotionApiUrl = "https://westus.api.cognitive.microsoft.com/emotion/v1.0/recognize";
+        //_apiUrl: The base URL for the Face API. Find out what this is for other APIs via the API documentation
+        public const string _faceApiUrl = "https://northeurope.api.cognitive.microsoft.com/face/v1.0";
 
         //_apiUrl: The base URL for the LUIS API. Find out what this is for other APIs via the API documentation
         public const string _luisApiUrl = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/";
@@ -33,7 +33,7 @@ namespace HowHappyCore.Controllers
         public IActionResult Index()
         {
             //clear any existing session data
-            SetSessionData("emotiondata", string.Empty);
+            SetSessionData("facedata", string.Empty);
 
             //create view model
             var vm = new ResultViewModel()
@@ -54,18 +54,18 @@ namespace HowHappyCore.Controllers
         public async Task<IActionResult> Emotion()
         {
             //get faces list if session data is empty or there is a file in the form
-            if (string.IsNullOrEmpty(ReadSessionData("emotiondata")))
+            if (string.IsNullOrEmpty(ReadSessionData("facedata")))
             {
                 //get file from form data
                 var file = Request.Form.Files[0];
 
                 //get emotion data from api and store it in session
                 var emotionDataString = await GetEmotionData(file);
-                SetSessionData("emotiondata", emotionDataString);
+                SetSessionData("facedata", emotionDataString);
             }
 
             //get faces list
-            var emotionData = ReadSessionData("emotiondata");
+            var emotionData = ReadSessionData("facedata");
             var faces = GetFaces(emotionData);
 
             //analyse luis query
@@ -119,28 +119,28 @@ namespace HowHappyCore.Controllers
             }
         }
 
-        private double GetAverageEmotionScore(List<Face> faces, string emotion)
+        private double GetAverageEmotionScore(List<FaceDto> faces, string emotion)
         {
             switch (emotion)
             {
                 case "happiness":
-                    return faces.Average(o => o.scores.happiness);
+                    return faces.Average(o => o.faceAttributes.emotion.happiness);
                 case "anger":
-                    return faces.Average(o => o.scores.anger);
+                    return faces.Average(o => o.faceAttributes.emotion.anger);
                 case "contempt":
-                    return faces.Average(o => o.scores.contempt);
+                    return faces.Average(o => o.faceAttributes.emotion.contempt);
                 case "disgust":
-                    return faces.Average(o => o.scores.disgust);
+                    return faces.Average(o => o.faceAttributes.emotion.disgust);
                 case "fear":
-                    return faces.Average(o => o.scores.fear);
+                    return faces.Average(o => o.faceAttributes.emotion.fear);
                 case "neutral":
-                    return faces.Average(o => o.scores.neutral);
+                    return faces.Average(o => o.faceAttributes.emotion.neutral);
                 case "sadness":
-                    return faces.Average(o => o.scores.sadness);
+                    return faces.Average(o => o.faceAttributes.emotion.sadness);
                 case "surprise":
-                    return faces.Average(o => o.scores.surprise);
+                    return faces.Average(o => o.faceAttributes.emotion.surprise);
                 default:
-                    return faces.Average(o => o.scores.happiness);
+                    return faces.Average(o => o.faceAttributes.emotion.happiness);
             }
         }
 
@@ -169,26 +169,26 @@ namespace HowHappyCore.Controllers
             }
         }
 
-        private List<Face> GetSortedFacesList(List<Face> faces, string emotion)
+        private List<FaceDto> GetSortedFacesList(List<FaceDto> faces, string emotion)
         {
             switch (emotion)
             {
                 case "happiness":
-                    return faces.OrderByDescending(o => o.scores.happiness).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.happiness).ToList();
                 case "anger":
-                    return faces.OrderByDescending(o => o.scores.anger).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.anger).ToList();
                 case "contempt":
-                    return faces.OrderByDescending(o => o.scores.contempt).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.contempt).ToList();
                 case "disgust":
-                    return faces.OrderByDescending(o => o.scores.disgust).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.disgust).ToList();
                 case "fear":
-                    return faces.OrderByDescending(o => o.scores.fear).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.fear).ToList();
                 case "neutral":
-                    return faces.OrderByDescending(o => o.scores.neutral).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.neutral).ToList();
                 case "sadness":
-                    return faces.OrderByDescending(o => o.scores.sadness).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.sadness).ToList();
                 case "surprise":
-                    return faces.OrderByDescending(o => o.scores.surprise).ToList();
+                    return faces.OrderByDescending(o => o.faceAttributes.emotion.surprise).ToList();
                 default:
                     return faces;
             }
@@ -233,16 +233,16 @@ namespace HowHappyCore.Controllers
             HttpContext.Session.Set(key, valueAsBytes);
         }
 
-        private List<Face> GetFaces(string json)
+        private List<FaceDto> GetFaces(string json)
         {
-            var faces = new List<Face>();
+            var faces = new List<FaceDto>();
 
             //parse json string to object and enumerate
             var responseArray = JArray.Parse(json);
             foreach (var faceResponse in responseArray)
             {
                 //deserialise json to face
-                var face = JsonConvert.DeserializeObject<Face>(faceResponse.ToString());
+                var face = JsonConvert.DeserializeObject<FaceDto>(faceResponse.ToString());
 
                 //add face to faces list
                 faces.Add(face);
@@ -258,14 +258,16 @@ namespace HowHappyCore.Controllers
             //call emotion api
             using (var httpClient = new HttpClient())
             {
+                var uri = $"{_faceApiUrl}/detect?returnFaceId=false&returnFaceLandmarks=false&returnFaceAttributes=emotion";
+
                 //setup HttpClient with content
-                httpClient.BaseAddress = new Uri(_emotionApiUrl);
-                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _emotionApiKey);
+                httpClient.BaseAddress = new Uri(_faceApiUrl);
+                httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", _faceApiKey);
                 var content = new StreamContent(file.OpenReadStream());
                 content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/octet-stream");
 
                 //make request
-                var responseMessage = await httpClient.PostAsync(_emotionApiUrl, content);
+                var responseMessage = await httpClient.PostAsync(uri, content);
 
                 //read response as a json string
                 responseString = await responseMessage.Content.ReadAsStringAsync();
